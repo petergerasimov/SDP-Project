@@ -9,7 +9,16 @@ void Parser::parseFile(std::string filename)
     {
         return;
     }
-    file >>
+    bool isPrevKeyword = false;
+    while(!file.eof())
+    {
+        std::string tmp;
+        file >> tmp;
+        if(tmp == )
+        {
+
+        }
+    }
 }
 void Parser::parseString(std::string str)
 {

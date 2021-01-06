@@ -1,7 +1,6 @@
 #ifndef __PARSER_HPP__
 #define __PARSER_HPP__
 
-
 #include <string>
 #include <list>
 
@@ -11,14 +10,14 @@ struct TreeNode
     std::list<TreeNode*> children;
 };
 
+enum keyWord {LET, READ, PRINT, GOTO, LABEL, WHITE, IF, ENDIF};
+
 struct Token
 {
-    int a;
+    keyWord keywrd;
+    std::string data;
 };
-// TODO
-// Make a parser for expressions first
-// lecture from 7.12
-// that's done with 2 stacks
+
 class Parser
 {
     public:
