@@ -86,8 +86,11 @@ std::vector<Token> Parser::parseExpression(std::string expr)
             }
             else
             {
-                toReturn.push_back({OPERATOR, curr});
-                curr.clear();
+                if(!curr.empty())
+                {
+                    toReturn.push_back({OPERATOR, curr});
+                    curr.clear();
+                }
                 curr.push_back(c);
             }
             isPrevNumber = true;

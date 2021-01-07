@@ -23,7 +23,7 @@
 int main()
 {
     Interpreter i;
-    std::vector<Token> tokens = i.parser.parseExpression("(3+4+5)-3");
+    std::vector<Token> tokens = i.parser.parseExpression("(-369+458+577)-327==-13");
     for(auto& t : tokens)
     {
         std::cout << t.data << std::endl;
