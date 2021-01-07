@@ -25,7 +25,6 @@ int Interpreter::evaluateExpression(std::string& expr)
     {
         if(t.keywrd == INT)
         {
-            std::cout << "Pushing " << atoi(t.data.c_str()) << std::endl;
             operands.push(atoi(t.data.c_str()));
         }
         else if (t.keywrd == OPERATOR)
@@ -44,6 +43,16 @@ int Interpreter::evaluateExpression(std::string& expr)
             }
             operators.push(t.data);
         }
+    }
+    while(!operators.empty())
+    {
+        std::cout << operands.top() << std::endl;
+        int x = operands.top();
+        operands.pop();
+        int y = operands.top();
+        operands.pop();
+        operands.push(operation(x, y, operators.top()));
+        operators.pop();
     }
     return operands.top();
 }
