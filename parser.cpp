@@ -4,7 +4,7 @@
 #include <cstring>
 #include <iostream>
 
-void Parser::parseFile(std::string filename)
+void Parser::parseFile(std::string& filename)
 {
     std::ifstream file(filename);
     if(!file)
@@ -22,22 +22,22 @@ void Parser::parseFile(std::string filename)
         // }
     }
 }
-void Parser::parseString(std::string str)
+void Parser::parseString(std::string& str)
 {
 
 }
 
-bool Parser::isNumber(char c)
+bool Parser::isNumber(const char& c)
 {
     return c >= '0' && c <= '9';
 }
 
-bool Parser::isBracket(char c)
+bool Parser::isBracket(const char& c)
 {
     return c == '(' || c == ')';
 }
 
-std::vector<Token> Parser::parseExpression(std::string expr)
+std::vector<Token> Parser::parseExpression(std::string& expr)
 {
     std::vector<Token> toReturn;
 

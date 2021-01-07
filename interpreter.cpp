@@ -10,67 +10,151 @@
 
 #include <stack>
 #include <cstring>
+#include <stdexcept>
+#include <iostream>
 
 
-int Interpreter::evaluateExpression(std::string expr)
+int Interpreter::evaluateExpression(std::string& expr)
 {
     std::stack<int> operands;
-    std::stack<char*> operators;
+    std::stack<std::string> operators;
 
-    // ! to / and  < to  >
-    
+    std::vector<Token> tokens = parser.parseExpression(expr);
+
+    for(const Token& t : tokens)
+    {
+        if(t.keywrd == INT)
+        {
+            std::cout << "Pushing " << atoi(t.data.c_str()) << std::endl;
+            operands.push(atoi(t.data.c_str()));
+        }
+        else if (t.keywrd == OPERATOR)
+        {
+            if(!operators.empty())
+            {
+                if(getOpPriority(t.data) < getOpPriority(operators.top()))
+                {
+                    int x = operands.top();
+                    operands.pop();
+                    int y = operands.top();
+                    operands.pop();
+                    operands.push(operation(x, y, operators.top()));
+                    operators.pop();
+                }
+            }
+            operators.push(t.data);
+        }
+    }
+    return operands.top();
 }
 
 // this can be done better with a hash function or std::map
 // И оператори =, ==, !=, <, <=, >, >=, +, *, /, -, %, &&, ||, !,()
 // https://en.cppreference.com/w/cpp/language/operator_precedence
-int Interpreter::getOpPriority(char op[3])
+int Interpreter::getOpPriority(const std::string& op)
 {
-    if(!strcmp(op, "("))
+    if(!op.compare("("))
     {
         return 0;
     }
-    else if(!strcmp(op, "="))
+    else if(!op.compare("="))
     {
         return 1;
     }
-    else if(!strcmp(op, "||"))
+    else if(!op.compare("||"))
     {
         return 2;
     }
-    else if(!strcmp(op, "&&"))
+    else if(!op.compare("&&"))
     {
         return 3;
     }
-    else if(!strcmp(op, "==") || !strcmp(op, "!="))
+    else if(!op.compare("==") || !op.compare("!="))
     {
         return 4;
     }
-    else if(!strcmp(op, "<") || !strcmp(op, "<=") ||
-            !strcmp(op, ">") || !strcmp(op, ">="))
+    else if(!op.compare("<") || !op.compare("<=") ||
+            !op.compare(">") || !op.compare(">="))
     {
         return 5;
     }
-    else if(!strcmp(op, "+") || !strcmp(op, "-"))
+    else if(!op.compare("+") || !op.compare("-"))
     {
         return 6;
     }
-    else if(!strcmp(op, "*") || !strcmp(op, "/") ||
-            !strcmp(op, "%"))
+    else if(!op.compare("*") || !op.compare("/") ||
+            !op.compare("%"))
     {
         return 7;
     }
-    else if(!strcmp(op, "!"))
+    else if(!op.compare("!"))
     {
         return 8;
     }
-    else if(!strcmp(op, ")"))
+    else if(!op.compare(")"))
     {
         return 9;
     }
     else
     {
-        return -1;
+        throw std::runtime_error("Invalid operator");
+    }
+    
+}
+
+int Interpreter::operation(int& x, int& y, const std::string& op)
+{
+    if(!op.compare("||"))
+    {
+        return x || y;
+    }
+    else if(!op.compare("&&"))
+    {
+        return x && y;
+    }
+    else if(!op.compare("==") || !op.compare("!="))
+    {
+        return x == y;
+    }
+    else if(!op.compare("<"))
+    {
+        return x < y;
+    }
+    else if(!op.compare("<="))
+    {
+        return x <= y;
+    }
+    else if(!op.compare(">"))
+    {
+        return x > y;
+    }
+    else if(!op.compare(">="))
+    {
+        return x >= y;
+    }
+    else if(!op.compare("+"))
+    {
+        return x + y;
+    }
+    else if(!op.compare("-"))
+    {
+        return x - y;
+    }
+    else if(!op.compare("*"))
+    {
+        return x * y;
+    }
+    else if(!op.compare("/"))
+    {
+        return x / y;
+    }
+    else if(!op.compare("%"))
+    {
+        return x % y;
+    }
+    else
+    {
+        throw std::runtime_error("Invalid operator");
     }
     
 }

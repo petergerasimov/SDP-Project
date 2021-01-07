@@ -23,12 +23,12 @@ struct Token
 class Parser
 {
     public:
-        void parseFile(std::string filename);
-        void parseString(std::string str);
-        std::vector<Token> parseExpression(std::string expr);
+        void parseFile(std::string& filename);
+        void parseString(std::string& str);
+        std::vector<Token> parseExpression(std::string& expr);
     private:
-        bool isNumber(char c);
-        bool isBracket(char c);
+        bool isNumber(const char& c);
+        bool isBracket(const char& c);
 
 };
 

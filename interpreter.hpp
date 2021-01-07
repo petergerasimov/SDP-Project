@@ -7,9 +7,10 @@ class Interpreter
 {
     public:
         Parser parser;
-        int evaluateExpression(std::string expr);
+        int evaluateExpression(std::string& expr);
     private:
-        int getOpPriority(char op[3]);
+        int getOpPriority(const std::string& op);
+        int operation(int& x, int& y, const std::string& op);
 };
 
 #endif //__INTERPRETER_HPP__
