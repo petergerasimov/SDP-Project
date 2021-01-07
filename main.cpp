@@ -23,10 +23,11 @@
 int main()
 {
     Interpreter i;
-    std::vector<Token> tokens = i.parser.parseExpression("(-369+458+577)-327==-13");
+    std::vector<Token> tokens = i.parser.parseExpression("-(-369+458+577)-327==-13");
     for(auto& t : tokens)
     {
-        std::cout << t.data << std::endl;
+        std::cout << t.data << " " << (t.keywrd == INT ? "INT" : "OPR") << std::endl;
+        std::cout << (t.keywrd == INT ? "" : "NaN") << atoi(t.data.c_str()) << std::endl;
     }
     return EXIT_SUCCESS;
 }

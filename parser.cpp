@@ -127,7 +127,7 @@ std::vector<Token> Parser::parseExpression(std::string expr)
     }
     if(!curr.empty())
     {
-        if(isNumber(curr[0]))
+        if(isNumber(curr[0]) || curr[0] == '-')
         {
             toReturn.push_back({INT, curr});
         }
