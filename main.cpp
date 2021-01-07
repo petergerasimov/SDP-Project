@@ -18,26 +18,15 @@
 
 // Пример за програма, която намира сума на определен брой числа:
 
-// LET count
-// READ count
-// IF count < 0
-// GOTO end
-// ENDIF
+#include "interpreter.hpp"
 
-// LET sum
-// sum = 0
-// WHILE count > 0
-// LET x
-// READ x
-// sum = sum + x
-// count = count - 1
-// DONE
-// PRINT sum
-
-// LABEL end	
 int main()
 {
-    
-
+    Interpreter i;
+    std::vector<Token> tokens = i.parser.parseExpression("(3+4+5)-3");
+    for(auto& t : tokens)
+    {
+        std::cout << t.data << std::endl;
+    }
     return EXIT_SUCCESS;
 }

@@ -9,7 +9,7 @@ class Interpreter
         Parser parser;
         int evaluateExpression(std::string expr);
     private:
-        int getOpPriority(std::string op);
+        int getOpPriority(char op[3]);
 };
 
 #endif //__INTERPRETER_HPP__
