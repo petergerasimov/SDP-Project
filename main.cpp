@@ -23,7 +23,8 @@
 int main()
 {
     Interpreter i;
-    std::string s = "(((3 * (2 + 1) + 2) == 11) * 3) < 10";
+    //"0-((3 * (2 + 1) + 2) + 1)"; this is not working properly
+    std::string s = "0-((3 * (2 + 1) + 2) + 1)";
     int res = 0;
 
     // std::vector<Token> tokens = i.parser.parseExpression(s);
