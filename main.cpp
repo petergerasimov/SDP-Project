@@ -23,7 +23,7 @@
 int main()
 {
     Interpreter i;
-    std::string s = "-369+458+577-327-13";
+    std::string s = "3 == 3";
     int res = i.evaluateExpression(s);
     std::cout << res << std::endl;
     return EXIT_SUCCESS;

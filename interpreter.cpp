@@ -23,6 +23,7 @@ int Interpreter::evaluateExpression(std::string& expr)
 
     for(const Token& t : tokens)
     {
+        std::cout << t.data << std::endl;
         if(t.keywrd == INT)
         {
             operands.push(atoi(t.data.c_str()));
@@ -31,13 +32,13 @@ int Interpreter::evaluateExpression(std::string& expr)
         {
             if(!operators.empty())
             {
-                if(getOpPriority(t.data) < getOpPriority(operators.top()))
+                if(getOpPriority(t.data) <= getOpPriority(operators.top()))
                 {
                     int x = operands.top();
                     operands.pop();
                     int y = operands.top();
                     operands.pop();
-                    operands.push(operation(x, y, operators.top()));
+                    operands.push(operation(y, x, operators.top()));
                     operators.pop();
                 }
             }
@@ -46,12 +47,11 @@ int Interpreter::evaluateExpression(std::string& expr)
     }
     while(!operators.empty())
     {
-        std::cout << operands.top() << std::endl;
         int x = operands.top();
         operands.pop();
         int y = operands.top();
         operands.pop();
-        operands.push(operation(x, y, operators.top()));
+        operands.push(operation(y, x, operators.top()));
         operators.pop();
     }
     return operands.top();
