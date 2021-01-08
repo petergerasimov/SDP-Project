@@ -8,12 +8,6 @@
 // https://dyingdown.github.io/2019/11/12/Calculator/
 // The pictures from this look like the lecture
 
-#include <stack>
-#include <cstring>
-#include <stdexcept>
-#include <iostream>
-
-
 int Interpreter::evaluateExpression(std::string& expr)
 {
     std::stack<int> operands;
@@ -23,7 +17,7 @@ int Interpreter::evaluateExpression(std::string& expr)
 
     for(const Token& t : tokens)
     {
-        std::cout << t.data << std::endl;
+       
         if(t.keywrd == INT)
         {
             operands.push(atoi(t.data.c_str()));
@@ -32,31 +26,50 @@ int Interpreter::evaluateExpression(std::string& expr)
         {
             if(!operators.empty())
             {
-                if(getOpPriority(t.data) <= getOpPriority(operators.top()))
+                if(!t.data.compare(")"))
                 {
-                    int x = operands.top();
-                    operands.pop();
-                    int y = operands.top();
-                    operands.pop();
-                    operands.push(operation(y, x, operators.top()));
+                    //TODO: check if there are the right amount of brackets
+                    while(operators.top().compare("("))
+                    {
+                        performLastOp(operands, operators);
+                    }
                     operators.pop();
                 }
+                else if(getOpPriority(t.data) <= getOpPriority(operators.top()))
+                {
+                    if(operators.top().compare("("))
+                    {
+                        performLastOp(operands, operators);
+                    }
+                }
             }
-            operators.push(t.data);
+            if(t.data.compare(")"))
+            {
+                operators.push(t.data);
+            }
         }
     }
     while(!operators.empty())
     {
-        int x = operands.top();
-        operands.pop();
-        int y = operands.top();
-        operands.pop();
-        operands.push(operation(y, x, operators.top()));
-        operators.pop();
+        performLastOp(operands, operators);
     }
     return operands.top();
 }
 
+
+void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::string>& operators)
+{
+    if(operands.size() < 2)
+    {
+        return;
+    }
+    int x = operands.top();
+    operands.pop();
+    int y = operands.top();
+    operands.pop();
+    operands.push(operation(y, x, operators.top()));
+    operators.pop();
+}
 // this can be done better with a hash function or std::map
 // И оператори =, ==, !=, <, <=, >, >=, +, *, /, -, %, &&, ||, !,()
 // https://en.cppreference.com/w/cpp/language/operator_precedence
@@ -106,7 +119,8 @@ int Interpreter::getOpPriority(const std::string& op)
     }
     else
     {
-        throw std::runtime_error("Invalid operator");
+        throw std::runtime_error("Invalid operator " + op);
+        return -1;
     }
     
 }
@@ -163,7 +177,8 @@ int Interpreter::operation(int& x, int& y, const std::string& op)
     }
     else
     {
-        throw std::runtime_error("Invalid operator");
+        throw std::runtime_error("Invalid operator " + op);
+        return -1;
     }
     
 }

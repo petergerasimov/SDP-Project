@@ -23,8 +23,23 @@
 int main()
 {
     Interpreter i;
-    std::string s = "3 == 3";
-    int res = i.evaluateExpression(s);
+    std::string s = "(((3 * (2 + 1) + 2) == 11) * 3) < 10";
+    int res = 0;
+
+    // std::vector<Token> tokens = i.parser.parseExpression(s);
+    // for(const Token& t : tokens)
+    // {
+    //     std::cout << t.data << " " << (t.keywrd == INT ? "INT" : "OP")  << std::endl;
+    // }
+
+    try
+    {
+        res = i.evaluateExpression(s);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
     std::cout << res << std::endl;
     return EXIT_SUCCESS;
 }

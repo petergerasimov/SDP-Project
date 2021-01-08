@@ -105,7 +105,7 @@ std::vector<Token> Parser::parseExpression(std::string& expr)
                     toReturn.push_back({OPERATOR, curr});
                     curr.clear();
                 }
-                if(isBracket(c))
+                if(isBracket(c) && !curr.empty())
                 {
                     toReturn.push_back({OPERATOR, curr});
                     curr.clear();
