@@ -23,8 +23,8 @@
 int main()
 {
     Interpreter i;
-    //"0-((3 * (2 + 1) + 2) + 1)"; this is not working properly
-    std::string s = "0-((3 * (2 + 1) + 2) + 1)";
+    //"-((3 * (2 + 1) + 2) + 1)"; this is not working properly
+    std::string s = "((3 > (2 == 1) + 2) + 1)";
     int res = 0;
 
     // std::vector<Token> tokens = i.parser.parseExpression(s);
@@ -32,6 +32,8 @@ int main()
     // {
     //     std::cout << t.data << " " << (t.keywrd == INT ? "INT" : "OP")  << std::endl;
     // }
+    std::string file = "test.txt";
+    i.parser.parseFile(file);
 
     try
     {

@@ -5,8 +5,16 @@
 #include <cstring>
 #include <stdexcept>
 #include <iostream>
+#include <list>
 
 #include "parser.hpp"
+
+
+struct TreeNode
+{
+    int data;
+    std::list<TreeNode*> children;
+};
 
 class Interpreter
 {

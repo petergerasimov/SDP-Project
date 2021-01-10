@@ -1,30 +1,57 @@
 #include "parser.hpp"
 
-#include <fstream>
-#include <cstring>
-#include <iostream>
-
 void Parser::parseFile(std::string& filename)
 {
     std::ifstream file(filename);
-    if(!file)
+    if(file)
     {
-        return;
-    }
-    bool isPrevKeyword = false;
-    while(!file.eof())
-    {
-        std::string tmp;
-        file >> tmp;
-        // if(tmp == )
-        // {
-
-        // }
+        std::stringstream ss;
+        ss << file.rdbuf();
+        parseString(ss.str());
+        file.close();
     }
 }
-void Parser::parseString(std::string& str)
+std::vector<Token> Parser::parseString(const std::string& str)
 {
+    // enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ENDIF, ASSIGN};
+    static const std::map<std::string, int> keyWordMap = {
+        {"INT", INT},
+        {"OPERATOR", OPERATOR},
+        {"LET", LET},
+        {"READ", READ},
+        {"PRINT", PRINT},
+        {"GOTO", GOTO},
+        {"LABEL", LABEL},
+        {"WHILE", WHILE},
+        {"DONE", DONE},
+        {"IF", IF},
+        {"ENDIF", ENDIF},
+        {"ASSIGN", ASSIGN}
+    };
 
+    std::vector<Token> toReturn;
+
+    //std::cout << str;
+    size_t sz = str.size();
+    std::string buff;
+    for(size_t i = 0; i < sz; i++)
+    {
+        if(!isspace(str[i]))
+        {
+            buff.push_back(str[i]);
+        }
+        else if(!buff.empty())
+        {
+            std::map<std::string, int>::const_iterator it = keyWordMap.find(buff);
+            if(it != keyWordMap.end())
+            {
+                std::cout << it->first << " " << it->second << std::endl;
+            }
+            buff.clear();
+        }
+        
+    }
+    return toReturn;
 }
 
 bool Parser::isNumber(const char& c)

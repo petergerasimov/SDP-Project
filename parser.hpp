@@ -3,16 +3,14 @@
 
 #include <vector>
 #include <string>
-#include <list>
+#include <sstream>
+#include <fstream>
+#include <cstring>
+#include <map>
+#include <iostream>
 
-struct TreeNode
-{
-    int data;
-    std::list<TreeNode*> children;
-};
 
-// enum keyWord {LET, READ, PRINT, GOTO, LABEL, WHITE, IF, ENDIF};
-enum keyWord {INT, OPERATOR};
+enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ENDIF, ASSIGN};
 
 struct Token
 {
@@ -24,7 +22,7 @@ class Parser
 {
     public:
         void parseFile(std::string& filename);
-        void parseString(std::string& str);
+        std::vector<Token> parseString(const std::string& str);
         std::vector<Token> parseExpression(std::string& expr);
     private:
         bool isNumber(const char& c);
