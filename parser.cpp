@@ -1,19 +1,21 @@
 #include "parser.hpp"
 
-void Parser::parseFile(std::string& filename)
+std::vector<Token> Parser::parseFile(std::string &filename)
 {
     std::ifstream file(filename);
-    if(file)
+    if (file)
     {
         std::stringstream ss;
         ss << file.rdbuf();
-        parseString(ss.str());
         file.close();
+        return parseString(ss.str());
     }
+    std::vector<Token> empty;
+    return empty;
 }
-std::vector<Token> Parser::parseString(const std::string& str)
+std::vector<Token> Parser::parseString(const std::string &str)
 {
-    // enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ENDIF, ASSIGN};
+    // enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN};
     static const std::map<std::string, int> keyWordMap = {
         {"INT", INT},
         {"OPERATOR", OPERATOR},
@@ -25,63 +27,123 @@ std::vector<Token> Parser::parseString(const std::string& str)
         {"WHILE", WHILE},
         {"DONE", DONE},
         {"IF", IF},
+        {"ELSE", ELSE},
         {"ENDIF", ENDIF},
-        {"ASSIGN", ASSIGN}
-    };
+        {"ASSIGN", ASSIGN}};
 
     std::vector<Token> toReturn;
 
     //std::cout << str;
     size_t sz = str.size();
     std::string buff;
-    for(size_t i = 0; i < sz; i++)
+    std::string buffPrev;
+    keyWord key;
+    bool foundKeyword = false;
+    for (size_t i = 0; i < sz; i++)
     {
-        if(!isspace(str[i]))
+        if (isNewline(str[i]))
         {
-            buff.push_back(str[i]);
-        }
-        else if(!buff.empty())
-        {
-            std::map<std::string, int>::const_iterator it = keyWordMap.find(buff);
-            if(it != keyWordMap.end())
+            // std::cout << "Adding " << buff << std::endl;
+            if (foundKeyword)
             {
-                std::cout << it->first << " " << it->second << std::endl;
+
+                toReturn.push_back({key, buff});
+                foundKeyword = false;
+                buff.clear();
             }
-            buff.clear();
         }
-        
+        else if (isBlank(str[i]))
+        {
+
+            if (!foundKeyword)
+            {
+                removeBlanks(buff);
+                if (!buff.empty())
+                {
+                    std::cout << "TESTING " << buff << std::endl;
+
+                    std::map<std::string, int>::const_iterator it = keyWordMap.find(buff);
+                    if (it != keyWordMap.end())
+                    {
+                        key = (keyWord)it->second;
+                        foundKeyword = true;
+                    }
+                    else if (buff.compare("="))
+                    {
+                        key = ASSIGN;
+                        foundKeyword = true;
+                        buff = buffPrev + " " + buff;
+                    }
+                    else
+                    {
+                        buffPrev = buff;
+                    }
+
+                    buff.clear();
+                    // i++; //to skip the space after keyword
+                }
+            }
+            size_t j;
+            //Removing all but the last blank space
+            // for(j = i; j + 1 < sz && isBlank(str[j + 1]); j++);
+            // i = j;
+        }
+        buff.push_back(str[i]);
     }
     return toReturn;
 }
 
-bool Parser::isNumber(const char& c)
+bool Parser::isNumber(const char &c)
 {
     return c >= '0' && c <= '9';
 }
 
-bool Parser::isBracket(const char& c)
+bool Parser::isBracket(const char &c)
 {
     return c == '(' || c == ')';
 }
 
-std::vector<Token> Parser::parseExpression(std::string& expr)
+bool Parser::isBlank(const char &c)
+{
+    return c == ' ' || c == '\t';
+}
+
+bool Parser::isNewline(const char &c)
+{
+    return c == '\r' || c == '\n';
+}
+
+void Parser::removeBlanks(std::string &str)
+{
+    std::string tmp;
+    for (const char &c : str)
+    {
+        if (!isBlank(c) && !isNewline(c))
+        {
+            tmp.push_back(c);
+        }
+    }
+    str = tmp;
+}
+
+std::vector<Token> Parser::parseExpression(std::string &expr)
 {
     std::vector<Token> toReturn;
 
     bool isPrevNumber = true;
     bool isPrevClosingBracket = false;
     std::string curr;
-    for(const char& c : expr)
-    {   
-        if(c == ' ')
+    for (const char &c : expr)
+    {
+        if (c == ' ')
         {
             continue;
         }
         else if (c == '-')
         {
-            if(!isPrevNumber || expr.empty())
+            if (!isPrevNumber || expr.empty())
             {
-                if(isPrevClosingBracket)
+                if (isPrevClosingBracket)
                 {
                     toReturn.push_back({OPERATOR, curr});
                     toReturn.push_back({OPERATOR, {c}});
@@ -105,15 +167,15 @@ std::vector<Token> Parser::parseExpression(std::string& expr)
             }
             isPrevClosingBracket = false;
         }
-        else if(isNumber(c))
+        else if (isNumber(c))
         {
-            if(isPrevNumber)
+            if (isPrevNumber)
             {
                 curr.push_back(c);
             }
             else
             {
-                if(!curr.empty())
+                if (!curr.empty())
                 {
                     toReturn.push_back({OPERATOR, curr});
                     curr.clear();
@@ -125,14 +187,14 @@ std::vector<Token> Parser::parseExpression(std::string& expr)
         }
         else
         {
-            if(!isPrevNumber)
+            if (!isPrevNumber)
             {
-                if(isBracket(curr[0]))
+                if (isBracket(curr[0]))
                 {
                     toReturn.push_back({OPERATOR, curr});
                     curr.clear();
                 }
-                if(isBracket(c) && !curr.empty())
+                if (isBracket(c) && !curr.empty())
                 {
                     toReturn.push_back({OPERATOR, curr});
                     curr.clear();
@@ -141,7 +203,7 @@ std::vector<Token> Parser::parseExpression(std::string& expr)
             }
             else
             {
-                if(!curr.empty())
+                if (!curr.empty())
                 {
                     toReturn.push_back({INT, curr});
                     curr.clear();
@@ -152,9 +214,9 @@ std::vector<Token> Parser::parseExpression(std::string& expr)
             isPrevNumber = false;
         }
     }
-    if(!curr.empty())
+    if (!curr.empty())
     {
-        if(isNumber(curr[0]) || curr[0] == '-')
+        if (isNumber(curr[0]) || curr[0] == '-')
         {
             toReturn.push_back({INT, curr});
         }

@@ -10,7 +10,7 @@
 #include <iostream>
 
 
-enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ENDIF, ASSIGN};
+enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN};
 
 struct Token
 {
@@ -21,12 +21,15 @@ struct Token
 class Parser
 {
     public:
-        void parseFile(std::string& filename);
+        std::vector<Token> parseFile(std::string& filename);
         std::vector<Token> parseString(const std::string& str);
         std::vector<Token> parseExpression(std::string& expr);
     private:
         bool isNumber(const char& c);
         bool isBracket(const char& c);
+        bool isBlank(const char& c);
+        bool isNewline(const char& c);
+        void removeBlanks(std::string& str);
 
 };
 

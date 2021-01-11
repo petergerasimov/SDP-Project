@@ -33,7 +33,13 @@ int main()
     //     std::cout << t.data << " " << (t.keywrd == INT ? "INT" : "OP")  << std::endl;
     // }
     std::string file = "test.txt";
-    i.parser.parseFile(file);
+    std::vector<Token> tokens = i.parser.parseFile(file);
+
+
+    for(auto& t : tokens)
+    {
+        std::cout << t.data << std::endl;
+    }
 
     try
     {
