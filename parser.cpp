@@ -39,36 +39,40 @@ std::vector<Token> Parser::parseString(const std::string &str)
     std::string buffPrev;
     keyWord key;
     bool foundKeyword = false;
+    bool pushBlank = false;
     for (size_t i = 0; i < sz; i++)
     {
         if (isNewline(str[i]))
         {
-            // std::cout << "Adding " << buff << std::endl;
             if (foundKeyword)
             {
-
+                if(pushBlank)
+                {
+                    buff.clear();
+                    pushBlank = false;
+                }
                 toReturn.push_back({key, buff});
                 foundKeyword = false;
                 buff.clear();
-            }
+            }           
         }
-        else if (isBlank(str[i]))
+        if (isBlank(str[i]) || isNewline(str[i]))
         {
-
             if (!foundKeyword)
             {
                 removeBlanks(buff);
                 if (!buff.empty())
                 {
-                    std::cout << "TESTING " << buff << std::endl;
-
                     std::map<std::string, int>::const_iterator it = keyWordMap.find(buff);
                     if (it != keyWordMap.end())
                     {
                         key = (keyWord)it->second;
                         foundKeyword = true;
+                        pushBlank = (key == ENDIF || key == DONE);
+                        buff.clear();
+                        i++; //REMOVING SPACE BEFORE EXPRESSION
                     }
-                    else if (buff.compare("="))
+                    else if (!buff.compare("="))
                     {
                         key = ASSIGN;
                         foundKeyword = true;
@@ -77,16 +81,10 @@ std::vector<Token> Parser::parseString(const std::string &str)
                     else
                     {
                         buffPrev = buff;
+                        buff.clear();
                     }
-
-                    buff.clear();
-                    // i++; //to skip the space after keyword
                 }
             }
-            size_t j;
-            //Removing all but the last blank space
-            // for(j = i; j + 1 < sz && isBlank(str[j + 1]); j++);
-            // i = j;
         }
         buff.push_back(str[i]);
     }
@@ -118,7 +116,7 @@ void Parser::removeBlanks(std::string &str)
     std::string tmp;
     for (const char &c : str)
     {
-        if (!isBlank(c) && !isNewline(c))
+        if (!isspace(c))
         {
             tmp.push_back(c);
         }
