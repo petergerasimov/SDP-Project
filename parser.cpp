@@ -40,26 +40,34 @@ std::vector<Token> Parser::parseString(const std::string &str)
     keyWord key;
     bool foundKeyword = false;
     bool pushBlank = false;
+    bool pushedBlank = false;
     for (size_t i = 0; i < sz; i++)
     {
-        if (isNewline(str[i]))
+        bool isLast = i == sz - 1;
+        buff.push_back(str[i]);
+        if (isNewline(str[i]) || isLast)
         {
             if (foundKeyword)
             {
                 if(pushBlank)
                 {
-                    buff.clear();
+                    toReturn.push_back({key, ""});
                     pushBlank = false;
                 }
-                toReturn.push_back({key, buff});
+                else
+                {
+                    removeBlanks(buff);
+                    toReturn.push_back({key, buff});
+                    buff.clear();
+                }
                 foundKeyword = false;
-                buff.clear();
-            }           
+            }        
         }
-        if (isBlank(str[i]) || isNewline(str[i]))
+        if(isspace(str[i]))
         {
-            if (!foundKeyword)
+            if (!foundKeyword || pushedBlank)
             {
+                pushedBlank = false;
                 removeBlanks(buff);
                 if (!buff.empty())
                 {
@@ -68,9 +76,8 @@ std::vector<Token> Parser::parseString(const std::string &str)
                     {
                         key = (keyWord)it->second;
                         foundKeyword = true;
-                        pushBlank = (key == ENDIF || key == DONE);
+                        pushedBlank = pushBlank = (key == ENDIF || key == DONE);
                         buff.clear();
-                        i++; //REMOVING SPACE BEFORE EXPRESSION
                     }
                     else if (!buff.compare("="))
                     {
@@ -86,7 +93,15 @@ std::vector<Token> Parser::parseString(const std::string &str)
                 }
             }
         }
-        buff.push_back(str[i]);
+    }
+    //taking care of ending condition keyword being last
+    if(!buff.empty())
+    {
+        std::map<std::string, int>::const_iterator it = keyWordMap.find(buff);
+        if (it != keyWordMap.end())
+        {
+            toReturn.push_back({(keyWord)it->second, ""});
+        }
     }
     return toReturn;
 }

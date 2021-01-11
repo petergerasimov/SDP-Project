@@ -13,3 +13,4 @@ WHILE count > 0
 DONE
 PRINT sum
 LABEL end
+DONE
