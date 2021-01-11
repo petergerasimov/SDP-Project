@@ -45,7 +45,7 @@ std::vector<Token> Parser::parseString(const std::string &str)
     {
         bool isLast = i == sz - 1;
         buff.push_back(str[i]);
-        if (isNewline(str[i]) || isLast)
+        if (isNewline(str[i]) || isLast || pushBlank)
         {
             if (foundKeyword)
             {
@@ -58,8 +58,9 @@ std::vector<Token> Parser::parseString(const std::string &str)
                 {
                     removeBlanks(buff);
                     toReturn.push_back({key, buff});
-                    buff.clear();
+                    
                 }
+                buff.clear();
                 foundKeyword = false;
             }        
         }
