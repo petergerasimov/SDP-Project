@@ -141,7 +141,7 @@ void Parser::removeBlanks(std::string &str)
     str = tmp;
 }
 
-std::vector<Token> Parser::parseExpression(std::string &expr)
+std::vector<Token> Parser::parseExpression(const std::string &expr)
 {
     std::vector<Token> toReturn;
 

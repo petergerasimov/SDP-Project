@@ -23,7 +23,7 @@ class Parser
     public:
         std::vector<Token> parseFile(std::string& filename);
         std::vector<Token> parseString(const std::string& str);
-        std::vector<Token> parseExpression(std::string& expr);
+        std::vector<Token> parseExpression(const std::string& expr);
     private:
         bool isNumber(const char& c);
         bool isBracket(const char& c);

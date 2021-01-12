@@ -23,16 +23,7 @@
 int main()
 {
     Interpreter i;
-    //"-((3 * (2 + 1) + 2) + 1)"; this is not working properly
-    std::string s = "((3 > (2 == 1) + 2) + 1)";
-    int res = 0;
-
-    // std::vector<Token> tokens = i.parser.parseExpression(s);
-    // for(const Token& t : tokens)
-    // {
-    //     std::cout << t.data << " " << (t.keywrd == INT ? "INT" : "OP")  << std::endl;
-    // }
-    std::string file = "test.txt";
+    std::string file = "test1.txt";
     std::vector<Token> tokens = i.parser.parseFile(file);
 
     static const std::map<int, std::string> testMap = {
@@ -61,14 +52,5 @@ int main()
     // }
 
     i.interpretTokens(tokens);
-    try
-    {
-        res = i.evaluateExpression(s);
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-    std::cout << res << std::endl;
     return EXIT_SUCCESS;
 }

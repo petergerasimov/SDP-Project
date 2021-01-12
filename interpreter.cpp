@@ -8,7 +8,7 @@
 // https://dyingdown.github.io/2019/11/12/Calculator/
 // The pictures from this look like the lecture
 
-int Interpreter::evaluateExpression(std::string& expr)
+int Interpreter::evaluateExpression(const std::string& expr)
 {
     std::stack<int> operands;
     std::stack<std::string> operators;
@@ -71,19 +71,67 @@ void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::strin
     operators.pop();
 }
 //:))) in class function pointer ;))))))))
-typedef int (Interpreter::*func)(const std::string& str);
-int Interpreter::print(const std::string& str)
+typedef void (Interpreter::*func)(const std::string& str);
+void Interpreter::_let(const std::string& str)
 {
     std::cout << str;
-    return EXIT_SUCCESS;
 }
+void Interpreter::_read(const std::string& str)
+{
+    std::cout << str;
+}
+void Interpreter::_print(const std::string& str)
+{
+    std::cout << evaluateExpression(str);
+}
+void Interpreter::_goto(const std::string& str)
+{
+    std::cout << str;
+}
+void Interpreter::_label(const std::string& str)
+{
+    std::cout << str;
+}
+void Interpreter::_while(const std::string& str)
+{
+    std::cout << str;
+}
+void Interpreter::_done(const std::string& str)
+{
+    std::cout << str;
+}
+void Interpreter::_if(const std::string& str)
+{
+    std::cout << str;
+}
+void Interpreter::_else(const std::string& str)
+{
+    std::cout << str;
+}
+void Interpreter::_endif(const std::string& str)
+{
+    std::cout << str;
+}
+void Interpreter::_assign(const std::string& str)
+{
+    std::cout << str;
+}
+
 void Interpreter::interpretTokens(std::vector<Token> tokens)
 {
-    func functions[] = {print};
     // enum keyWord {LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, INT, OPERATOR};
+    // INT and OPERATOR are for expressions only
+    static const size_t numOfFuncs = 11;
+    static const func functions[numOfFuncs] = {_let, _read, _print, _goto,
+                                               _label, _while, _done, _if, 
+                                               _else, _endif, _assign};
+    
     for(const Token& t : tokens)
     {
-        (this->*functions[0])(t.data);
+        if(t.keywrd < numOfFuncs)
+        {
+            (this->*functions[t.keywrd])(t.data);
+        }
     }
 }
 
