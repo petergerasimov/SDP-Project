@@ -1,9 +1,10 @@
 #include "varhandler.hpp"
 
-Variable::Variable(std::string& name, size_t sz)
+Variable::Variable(const std::string& name, size_t sz)
 {
     this->name = name;
-    isArray = (sz <= 1);
+    this->sz = sz;
+    isArray = (sz > 1);
     if(isArray)
     {
         makeArray(sz);
@@ -18,8 +19,10 @@ Variable::Variable(const Variable &rhs)
 {
     name = rhs.name;
     isArray = rhs.isArray;
+    isValid = rhs.isValid;
     sz = rhs.sz;
-    pointer = pointer;
+    pointer = new int[sz];
+    *pointer = *rhs.pointer;
 }
 Variable::~Variable()
 {
@@ -126,7 +129,7 @@ bool Variable::getValidity() const
 //Variable handler
 typedef std::unordered_map<std::string, Variable>::iterator varMapIter;
 
-void VarHandler::add(std::string& name, size_t sz)
+void VarHandler::add(const std::string& name, size_t sz)
 {
     varMapIter it = varMap.find(name);
     if(it != varMap.end())
@@ -154,7 +157,7 @@ void VarHandler::add(std::string& name, size_t sz)
         varMap.insert({name, tmp});
     }
 }
-void VarHandler::changeValue(std::string& name, int& value, size_t index)
+void VarHandler::changeValue(const std::string& name, int& value, size_t index)
 {
     varMapIter it = varMap.find(name);
     if(it != varMap.end())
@@ -168,8 +171,12 @@ void VarHandler::changeValue(std::string& name, int& value, size_t index)
             throw std::runtime_error("Variable " + name + " not defined.");
         }
     }
+    else
+    {
+        throw std::runtime_error("Variable " + name + " not defined.");
+    }
 }
-int VarHandler::getValue(std::string& name, size_t index)
+int VarHandler::getValue(const std::string& name, size_t index)
 {
     varMapIter it = varMap.find(name);
     if(it != varMap.end())
@@ -183,9 +190,14 @@ int VarHandler::getValue(std::string& name, size_t index)
             throw std::runtime_error("Variable " + name + " not defined.");
         }
     }
+    else
+    {
+        throw std::runtime_error("Variable " + name + " not defined.");
+    }
+    
     return 0;
 }
-void VarHandler::invalidate(std::string& name)
+void VarHandler::invalidate(const std::string& name)
 {
     varMapIter it = varMap.find(name);
     if(it != varMap.end())
@@ -193,7 +205,7 @@ void VarHandler::invalidate(std::string& name)
         it->second.invalidate();
     }
 }
-bool VarHandler::isValid(std::string& name)
+bool VarHandler::isValid(const std::string& name)
 {
     varMapIter it = varMap.find(name);
     if(it != varMap.end())

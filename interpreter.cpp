@@ -74,15 +74,20 @@ void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::strin
 typedef void (Interpreter::*func)(const std::string& str);
 void Interpreter::_let(const std::string& str)
 {
-    std::cout << str;
+    //TODO add arrays
+    varHandler.add(str);
 }
 void Interpreter::_read(const std::string& str)
 {
-    std::cout << str;
+    //TODO make it work with arrays
+    int tmp;
+    std::cin >> tmp;
+    varHandler.changeValue(str, tmp);
 }
 void Interpreter::_print(const std::string& str)
 {
-    std::cout << evaluateExpression(str);
+    //std::cout << evaluateExpression(str);
+    std::cout << varHandler.getValue(str);
 }
 void Interpreter::_goto(const std::string& str)
 {
@@ -114,7 +119,30 @@ void Interpreter::_endif(const std::string& str)
 }
 void Interpreter::_assign(const std::string& str)
 {
-    std::cout << str;
+    //TODO make it work with arrays
+    //Also redesign wtih new expression evaluator
+    std::string buffVar;
+    std::string buffExpr;
+    bool foundEq = false;
+    for(const char c : str)
+    {
+        if(c == '=')
+        {
+            foundEq = true;
+            continue;
+        }
+        if(!foundEq)
+        {
+            buffVar.push_back(c);
+        }
+        else
+        {
+            buffExpr.push_back(c);
+        }
+        
+    }
+    int exprValue = evaluateExpression(buffExpr);
+    varHandler.changeValue(buffVar, exprValue);
 }
 
 void Interpreter::interpretTokens(std::vector<Token> tokens)

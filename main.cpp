@@ -51,6 +51,14 @@ int main()
     //     std::cout << t.data << std::endl;
     // }
 
-    i.interpretTokens(tokens);
+    try
+    {
+        i.interpretTokens(tokens);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
     return EXIT_SUCCESS;
 }

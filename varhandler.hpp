@@ -4,11 +4,12 @@
 #include <string>
 #include <unordered_map>
 #include <stdexcept>
+#include <iostream>
 
 class Variable
 {
 public:
-    Variable(std::string& name, size_t sz = 0);
+    Variable(const std::string& name, size_t sz = 0);
     Variable(const Variable &rhs);
     ~Variable();
     //this is for the hash map
@@ -53,11 +54,11 @@ namespace std
 class VarHandler
 {
 public:
-    void add(std::string& name, size_t sz = 0);
-    void changeValue(std::string& name, int& value, size_t index = 0);
-    int getValue(std::string& name, size_t index = 0);
-    void invalidate(std::string& name);
-    bool isValid(std::string& name);
+    void add(const std::string& name, size_t sz = 0);
+    void changeValue(const std::string& name, int& value, size_t index = 0);
+    int getValue(const std::string& name, size_t index = 0);
+    void invalidate(const std::string& name);
+    bool isValid(const std::string& name);
 private:
     std::unordered_map<std::string, Variable> varMap;
 };
