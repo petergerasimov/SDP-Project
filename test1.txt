@@ -1,5 +1,6 @@
 LET something
-something = 60 + 9
+something = 0
+LABEL repeat
 something = something + 1
 PRINT something
-
+GOTO repeat

@@ -283,7 +283,7 @@ std::vector<Token> Parser::parseExpression(const std::string &expr)
 
     return toReturn;
 }
-
+// Attempt to make expression parser cleaner
 // std::vector<Token> Parser::parseExpression(const std::string &expr)
 // {
 //     std::vector<Token> toReturn;
