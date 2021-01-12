@@ -9,13 +9,17 @@ struct Variable
 public:
     std::string name;
     bool isArray = false;
-    int getValue(size_t index = 0);
-    void invalidate();
-    bool isValid();
+    Variable();
+    ~Variable();
     bool operator==(const Variable &rhs) const
     {
         return (name == rhs.name);
     }
+    //
+    int getValue(size_t index = 0);
+    void invalidate();
+    bool isValid();
+    
 private:
     int *pointer = nullptr;
 };
@@ -36,7 +40,13 @@ namespace std
 class VarHandler
 {
 public:
-    void addVariable();
+    void add(std::string name, bool isArray = false, size_t sz = 0);
+    void changeValue(std::string name, int value, size_t index);
+    void getValue(std::string name, size_t index);
+    void invalidate(std::string name);
+    void isValid(std::string name);
+
+
 
 private:
     std::unordered_map<std::string, Variable> varMap;
