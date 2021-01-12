@@ -70,6 +70,23 @@ void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::strin
     operands.push(operation(y, x, operators.top()));
     operators.pop();
 }
+//:))) in class function pointer ;))))))))
+typedef int (Interpreter::*func)(const std::string& str);
+int Interpreter::print(const std::string& str)
+{
+    std::cout << str;
+    return EXIT_SUCCESS;
+}
+void Interpreter::interpretTokens(std::vector<Token> tokens)
+{
+    func functions[] = {print};
+    // enum keyWord {LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, INT, OPERATOR};
+    for(const Token& t : tokens)
+    {
+        (this->*functions[0])(t.data);
+    }
+}
+
 // this can be done better with a hash function or std::map
 // И оператори =, ==, !=, <, <=, >, >=, +, *, /, -, %, &&, ||, !,()
 // https://en.cppreference.com/w/cpp/language/operator_precedence
@@ -125,6 +142,8 @@ int Interpreter::getOpPriority(const std::string& op)
     
 }
 
+//TODO MAKE THIS BETTER
+//EITHER WITH MAP OR UNORDERED_MAP
 int Interpreter::operation(int& x, int& y, const std::string& op)
 {
     if(!op.compare("||"))

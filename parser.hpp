@@ -10,7 +10,7 @@
 #include <iostream>
 
 
-enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN};
+enum keyWord {LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, INT, OPERATOR};
 
 struct Token
 {

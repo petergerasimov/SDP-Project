@@ -36,8 +36,6 @@ int main()
     std::vector<Token> tokens = i.parser.parseFile(file);
 
     static const std::map<int, std::string> testMap = {
-        {INT, "INT"},
-        {OPERATOR, "OPERATOR"},
         {LET, "LET"},
         {READ, "READ"},
         {PRINT, "PRINT"},
@@ -48,18 +46,21 @@ int main()
         {IF, "IF"},
         {ELSE, "ELSE"},
         {ENDIF, "ENDIF"},
-        {ASSIGN, "ASSIGN"}};
+        {ASSIGN, "ASSIGN"},
+        {INT, "INT"},
+        {OPERATOR, "OPERATOR"}};
 
-    for(auto& t : tokens)
-    {
-        auto it = testMap.find(t.keywrd);
-        if(it != testMap.end())
-        {
-            std::cout << it->second << " ";
-        } 
-        std::cout << t.data << std::endl;
-    }
+    // for(auto& t : tokens)
+    // {
+    //     auto it = testMap.find(t.keywrd);
+    //     if(it != testMap.end())
+    //     {
+    //         std::cout << it->second << " ";
+    //     } 
+    //     std::cout << t.data << std::endl;
+    // }
 
+    i.interpretTokens(tokens);
     try
     {
         res = i.evaluateExpression(s);

@@ -17,8 +17,6 @@ std::vector<Token> Parser::parseString(const std::string &str)
 {
     // enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN};
     static const std::map<std::string, int> keyWordMap = {
-        {"INT", INT},
-        {"OPERATOR", OPERATOR},
         {"LET", LET},
         {"READ", READ},
         {"PRINT", PRINT},
@@ -29,7 +27,10 @@ std::vector<Token> Parser::parseString(const std::string &str)
         {"IF", IF},
         {"ELSE", ELSE},
         {"ENDIF", ENDIF},
-        {"ASSIGN", ASSIGN}};
+        {"ASSIGN", ASSIGN},
+        {"INT", INT},
+        {"OPERATOR", OPERATOR}
+    };
 
     std::vector<Token> toReturn;
 
