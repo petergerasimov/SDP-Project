@@ -22,6 +22,10 @@ class Parser
         bool isBracket(const char& c);
         bool isBlank(const char& c);
         bool isNewline(const char& c);
+        bool isValidVar(const char& c);
+
+        keyWord numOrVar(std::string& str);
+
         void removeBlanks(std::string& str);
 
 };

@@ -15,7 +15,7 @@ std::vector<Token> Parser::parseFile(std::string &filename)
 }
 std::vector<Token> Parser::parseString(const std::string &str)
 {
-    //enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};
+    //enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, VAR, OPERATOR};
     static const std::map<std::string, int> keyWordMap = {
         {"LET", LET},
         {"READ", READ},
@@ -128,6 +128,45 @@ bool Parser::isNewline(const char &c)
     return c == '\r' || c == '\n';
 }
 
+bool Parser::isValidVar(const char& c)
+{
+    return (c >= 'a' && c <= 'z') ||
+           (c >= 'A' && c <= 'Z') ||
+           (c == '_');
+}
+
+keyWord Parser::numOrVar(std::string& str)
+{
+    if(str.empty())
+    {
+        //EMPTY STRING IS 0
+        return INT;
+    }
+    bool isNum = false;
+    bool isVar = false;
+    bool isBad = false;
+    for(const char& c : str)
+    {
+        if(isNumber(c) || c == '-')
+        {
+            isNum = true;
+        }
+        else if(isValidVar(c))
+        {
+            isVar = true;
+        }
+        else
+        {
+            isBad = true;
+        }
+    }
+    if(isBad || (isNum && isVar))
+    {
+        throw std::runtime_error(str + " is not a valid variable name");
+    }
+    return isNum ? INT : VAR;
+}
+
 void Parser::removeBlanks(std::string &str)
 {
     std::string tmp;
@@ -175,14 +214,15 @@ std::vector<Token> Parser::parseExpression(const std::string &expr)
             }
             else
             {
-                toReturn.push_back({INT, curr});
+                toReturn.push_back({numOrVar(curr), curr});
                 curr.clear();
                 curr.push_back(c);
                 isPrevNumber = false;
             }
             isPrevClosingBracket = false;
         }
-        else if (isNumber(c))
+        // Note to self: Added var to here
+        else if (isNumber(c) || isValidVar(c))
         {
             if (isPrevNumber)
             {
@@ -220,7 +260,7 @@ std::vector<Token> Parser::parseExpression(const std::string &expr)
             {
                 if (!curr.empty())
                 {
-                    toReturn.push_back({INT, curr});
+                    toReturn.push_back({numOrVar(curr), curr});
                     curr.clear();
                 }
                 curr.push_back(c);
@@ -233,7 +273,7 @@ std::vector<Token> Parser::parseExpression(const std::string &expr)
     {
         if (isNumber(curr[0]) || curr[0] == '-')
         {
-            toReturn.push_back({INT, curr});
+            toReturn.push_back({numOrVar(curr), curr});
         }
         else
         {
@@ -243,3 +283,95 @@ std::vector<Token> Parser::parseExpression(const std::string &expr)
 
     return toReturn;
 }
+
+// std::vector<Token> Parser::parseExpression(const std::string &expr)
+// {
+//     std::vector<Token> toReturn;
+//     std::string buffer;
+//     bool isPrevNumber = false;
+//     bool isPrevVar = false;
+//     bool isPrevOp = true;
+//     bool isPrevClosingBracket = false;
+//     for(const char& c : expr)
+//     {
+//         if(isspace(c))
+//         {
+//             continue;
+//         }
+//         else if(isNumber(c))
+//         {
+//             if(!isPrevNumber)
+//             {
+//                 keyWord key = isPrevVar ? VAR : OPERATOR;
+//                 if(!buffer.empty())
+//                     toReturn.push_back({key, buffer});
+//                 buffer.clear();
+//             }
+//             buffer.push_back(c);
+//             isPrevNumber = true;
+//             isPrevVar = false;
+//             isPrevOp = false;
+//             isPrevClosingBracket = false;
+//         }
+//         else if(isValidVar(c))
+//         {
+//             if(!isPrevVar)
+//             {
+//                 keyWord key = isPrevNumber ? INT : OPERATOR;
+//                 if(!buffer.empty())
+//                     toReturn.push_back({key, buffer});
+//                 buffer.clear();
+//             }
+//             buffer.push_back(c);
+//             isPrevNumber = false;
+//             isPrevVar = true;
+//             isPrevOp = false;
+//             isPrevClosingBracket = false;
+//         }
+//         // In this case I'm assuming it's an operator
+//         else
+//         {
+//             if(!isPrevOp)
+//             {
+//                 keyWord key = isPrevNumber ? INT : VAR;
+//                 if(!buffer.empty())
+//                     toReturn.push_back({key, buffer});
+//                 buffer.clear();
+//                 buffer.push_back(c);
+//             }
+//             else if(isPrevClosingBracket)
+//             {
+//                 if(!buffer.empty())
+//                     toReturn.push_back({OPERATOR, buffer});
+//                 // toReturn.push_back({OPERATOR, {c}});
+//                 buffer.clear();
+//                 buffer.push_back(c);
+//             }
+//             //Last was operator and not closing bracket
+//             else
+//             {
+//                 if(c == '-' || c == '+')
+//                 {
+//                     toReturn.push_back({INT, {'0'}});
+//                     toReturn.push_back({OPERATOR, {c}});
+//                 }
+//                 else if(isBracket(c))
+//                 {
+//                     toReturn.push_back({OPERATOR, {c}});
+//                 }
+//                 else
+//                 {
+//                     buffer.push_back(c);
+//                 }
+                
+//             }
+//             isPrevNumber = false;
+//             isPrevVar = false;
+//             isPrevOp = true;
+//             isPrevClosingBracket = (c == ')');
+//         }
+        
+//     }
+    
+//     return toReturn;
+// }

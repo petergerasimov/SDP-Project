@@ -57,9 +57,8 @@ int main()
     Interpreter i;
     std::string file = "test1.txt";
     std::vector<Token> tokens = i.parser.parseFile(file);
-    ExpressionTree ex;
-    toSVG(ex.generate("5+(1+5) + (1+2)"), "nodes.svg");
-    std::cout << "HERE" << std::endl;
+    
+    
     static const std::map<int, std::string> testMap = {
         {LET, "LET"},
         {READ, "READ"},
@@ -70,10 +69,26 @@ int main()
         {ELSE, "ELSE"},
         {ENDIF, "ENDIF"},
         {ASSIGN, "ASSIGN"},
+        {GOTO, "GOTO"},
+        {LABEL, "LABEL"},
         {INT, "INT"},
+        {VAR, "VAR"},
         {OPERATOR, "OPERATOR"}
     };
 
+    // std::vector<Token> toes = i.parser.parseExpression("-5+(1+5) + (1+2)");
+    // for(auto& t : toes)
+    // {
+    //     auto it = testMap.find(t.keywrd);
+    //     if(it != testMap.end())
+    //     {
+    //         std::cout << it->second << " ";
+    //     } 
+    //     std::cout << t.data << std::endl;
+    // }
+    // std::cout << "HERE" << std::endl;
+    ExpressionTree ex;
+    toSVG(ex.generate("name-5+(1+5) + (1+2)"), "nodes.svg");
     // for(auto& t : tokens)
     // {
     //     auto it = testMap.find(t.keywrd);
