@@ -27,9 +27,9 @@ std::vector<Token> Parser::parseString(const std::string &str)
         {"ENDIF", ENDIF},
         {"ASSIGN", ASSIGN},
         {"GOTO", GOTO},
-        {"LABEL", LABEL},
-        {"INT", INT},
-        {"OPERATOR", OPERATOR}
+        {"LABEL", LABEL}
+        // {"INT", INT},
+        // {"OPERATOR", OPERATOR}
     };
 
     std::vector<Token> toReturn;

@@ -9,14 +9,7 @@
 #include <map>
 #include <iostream>
 
-
-enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};
-
-struct Token
-{
-    keyWord keywrd;
-    std::string data;
-};
+#include "helper.hpp"
 
 class Parser
 {

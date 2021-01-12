@@ -164,6 +164,8 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
             {
                 if(tokens[j].keywrd == LABEL)
                 {
+                    //this will GOTO the first LABEL with the same
+                    //string that it finds
                     if(tokens[j].data == tokens[i].data)
                     {
                         i = --j;

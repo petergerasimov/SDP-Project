@@ -10,15 +10,6 @@
 #include "parser.hpp"
 #include "varhandler.hpp"
 
-
-struct TreeNode
-{
-    int data;
-    std::list<TreeNode*> children;
-};
-
-
-
 class Interpreter
 {
     public:
