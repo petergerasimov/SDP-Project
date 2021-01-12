@@ -3,24 +3,37 @@
 
 #include <string>
 #include <unordered_map>
+#include <stdexcept>
 
-struct Variable
+class Variable
 {
 public:
-    std::string name;
-    bool isArray = false;
-    Variable();
+    Variable(std::string& name, size_t sz = 0);
+    Variable(const Variable &rhs);
     ~Variable();
-    bool operator==(const Variable &rhs) const
-    {
-        return (name == rhs.name);
-    }
+    //this is for the hash map
+    bool operator==(const Variable &rhs) const;
+    //Make array and make variable
+    //Should be used only when there is 
+    //Already a variable with the same name
+    //but is invalid
+    void makeArray(size_t& sz);
+    void makeVariable();
     //
-    int getValue(size_t index = 0);
+    void setValue(int& value, size_t index = 0);
+    //
+    const int getValue(size_t index = 0) const;
+    const std::string& getName() const;
+    bool getValidity() const;
+    //
     void invalidate();
-    bool isValid();
+    
     
 private:
+    std::string name;
+    bool isArray;
+    bool isValid = false;
+    size_t sz;
     int *pointer = nullptr;
 };
 
@@ -31,7 +44,7 @@ namespace std
     {
         std::size_t operator()(const Variable &var) const
         {
-            return hash<std::string>()(var.name);
+            return hash<std::string>()(var.getName());
         }
     };
 
@@ -40,14 +53,11 @@ namespace std
 class VarHandler
 {
 public:
-    void add(std::string name, bool isArray = false, size_t sz = 0);
-    void changeValue(std::string name, int value, size_t index);
-    void getValue(std::string name, size_t index);
-    void invalidate(std::string name);
-    void isValid(std::string name);
-
-
-
+    void add(std::string& name, size_t sz = 0);
+    void changeValue(std::string& name, int& value, size_t index = 0);
+    int getValue(std::string& name, size_t index = 0);
+    void invalidate(std::string& name);
+    bool isValid(std::string& name);
 private:
     std::unordered_map<std::string, Variable> varMap;
 };

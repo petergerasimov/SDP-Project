@@ -8,6 +8,7 @@
 #include <list>
 
 #include "parser.hpp"
+#include "varhandler.hpp"
 
 
 struct TreeNode
