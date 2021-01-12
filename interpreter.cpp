@@ -71,53 +71,54 @@ void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::strin
     operators.pop();
 }
 //:))) in class function pointer ;))))))))
-typedef void (Interpreter::*func)(const std::string& str);
-void Interpreter::_let(const std::string& str)
+typedef int (Interpreter::*func)(const std::string& str);
+int Interpreter::_let(const std::string& str)
 {
     //TODO add arrays
     varHandler.add(str);
+    return 1;
 }
-void Interpreter::_read(const std::string& str)
+int Interpreter::_read(const std::string& str)
 {
     //TODO make it work with arrays
     int tmp;
     std::cin >> tmp;
     varHandler.changeValue(str, tmp);
+    return 1;
 }
-void Interpreter::_print(const std::string& str)
+int Interpreter::_print(const std::string& str)
 {
     //std::cout << evaluateExpression(str);
     std::cout << varHandler.getValue(str);
+    std::cout << std::endl;
+    return 1;
 }
-void Interpreter::_goto(const std::string& str)
+int Interpreter::_while(const std::string& str)
 {
     std::cout << str;
+    return 1;
 }
-void Interpreter::_label(const std::string& str)
+int Interpreter::_done(const std::string& str)
 {
     std::cout << str;
+    return 1;
 }
-void Interpreter::_while(const std::string& str)
+int Interpreter::_if(const std::string& str)
 {
     std::cout << str;
+    return 1;
 }
-void Interpreter::_done(const std::string& str)
+int Interpreter::_else(const std::string& str)
 {
     std::cout << str;
+    return 1;
 }
-void Interpreter::_if(const std::string& str)
+int Interpreter::_endif(const std::string& str)
 {
     std::cout << str;
+    return 1;
 }
-void Interpreter::_else(const std::string& str)
-{
-    std::cout << str;
-}
-void Interpreter::_endif(const std::string& str)
-{
-    std::cout << str;
-}
-void Interpreter::_assign(const std::string& str)
+int Interpreter::_assign(const std::string& str)
 {
     //TODO make it work with arrays
     //Also redesign wtih new expression evaluator
@@ -143,22 +144,37 @@ void Interpreter::_assign(const std::string& str)
     }
     int exprValue = evaluateExpression(buffExpr);
     varHandler.changeValue(buffVar, exprValue);
+    return 1;
 }
 
 void Interpreter::interpretTokens(std::vector<Token> tokens)
 {
-    // enum keyWord {LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, INT, OPERATOR};
+    // enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};;
     // INT and OPERATOR are for expressions only
-    static const size_t numOfFuncs = 11;
-    static const func functions[numOfFuncs] = {_let, _read, _print, _goto,
-                                               _label, _while, _done, _if, 
+    static const size_t numOfFuncs = 9;
+    static const func functions[numOfFuncs] = {_let, _read, _print, _while, _done, _if, 
                                                _else, _endif, _assign};
     
-    for(const Token& t : tokens)
+    int sz = tokens.size();
+    for(size_t i = 0; i < sz; i++)
     {
-        if(t.keywrd < numOfFuncs)
+        if(tokens[i].keywrd == GOTO)
         {
-            (this->*functions[t.keywrd])(t.data);
+            for(size_t j = 0; j < sz; j++)
+            {
+                if(tokens[j].keywrd == LABEL)
+                {
+                    if(tokens[j].data == tokens[i].data)
+                    {
+                        i = --j;
+                        continue;
+                    }
+                }
+            }
+        }
+        else if(tokens[i].keywrd < numOfFuncs)
+        {
+            (this->*functions[tokens[i].keywrd])(tokens[i].data);
         }
     }
 }

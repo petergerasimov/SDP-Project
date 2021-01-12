@@ -30,8 +30,6 @@ int main()
         {LET, "LET"},
         {READ, "READ"},
         {PRINT, "PRINT"},
-        {GOTO, "GOTO"},
-        {LABEL, "LABEL"},
         {WHILE, "WHILE"},
         {DONE, "DONE"},
         {IF, "IF"},

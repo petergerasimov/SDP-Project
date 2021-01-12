@@ -32,17 +32,15 @@ class Interpreter
         int operation(int& x, int& y, const std::string& op);
         void performLastOp(std::stack<int>& operands, std::stack<std::string>& operators);
         //
-        void _let(const std::string& str);
-        void _read(const std::string& str);
-        void _print(const std::string& str);
-        void _goto(const std::string& str);
-        void _label(const std::string& str);
-        void _while(const std::string& str);
-        void _done(const std::string& str);
-        void _if(const std::string& str);
-        void _else(const std::string& str);
-        void _endif(const std::string& str);
-        void _assign(const std::string& str);
+        int _let(const std::string& str);
+        int _read(const std::string& str);
+        int _print(const std::string& str);
+        int _while(const std::string& str);
+        int _done(const std::string& str);
+        int _if(const std::string& str);
+        int _else(const std::string& str);
+        int _endif(const std::string& str);
+        int _assign(const std::string& str);
 };
 
 #endif //__INTERPRETER_HPP__

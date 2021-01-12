@@ -15,19 +15,19 @@ std::vector<Token> Parser::parseFile(std::string &filename)
 }
 std::vector<Token> Parser::parseString(const std::string &str)
 {
-    // enum keyWord {INT, OPERATOR, LET, READ, PRINT, GOTO, LABEL, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN};
+    //enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};
     static const std::map<std::string, int> keyWordMap = {
         {"LET", LET},
         {"READ", READ},
         {"PRINT", PRINT},
-        {"GOTO", GOTO},
-        {"LABEL", LABEL},
         {"WHILE", WHILE},
         {"DONE", DONE},
         {"IF", IF},
         {"ELSE", ELSE},
         {"ENDIF", ENDIF},
         {"ASSIGN", ASSIGN},
+        {"GOTO", GOTO},
+        {"LABEL", LABEL},
         {"INT", INT},
         {"OPERATOR", OPERATOR}
     };

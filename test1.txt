@@ -1,3 +1,8 @@
 LET something
-something = 5+ 5
+something = 60 + 9
+LABEL end
 PRINT something
+GOTO end
+LET bruh
+READ bruh
+PRINT bruh
