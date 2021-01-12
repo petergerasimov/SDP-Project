@@ -1,4 +1,5 @@
 LET something
 something = 60 + 9
+something = something + 1
 PRINT something
 

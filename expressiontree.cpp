@@ -9,7 +9,7 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
 
     for(const Token& t : tokens)
     {
-        if(t.keywrd == INT)
+        if(t.keywrd == INT || t.keywrd == VAR)
         {
             Node* toAdd = new Node(t, nullptr, nullptr);
             operands.push(toAdd);
@@ -30,7 +30,6 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                         constructBinOpNode(operands, operators);
                     }
                     operators.pop();
-                    std::cout << "TOP AFTER BRACKETS " << operators.top() << std::endl;
                     // continue;
                 }
                 else if(getOpPriority(t.data) < getOpPriority(operators.top()))

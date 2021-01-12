@@ -8,55 +8,52 @@
 // https://dyingdown.github.io/2019/11/12/Calculator/
 // The pictures from this look like the lecture
 
-int Interpreter::evaluateExpression(const std::string& expr)
+int Interpreter::evaluateTree(ExpressionTree::Node* tree)
 {
-    std::stack<int> operands;
-    std::stack<std::string> operators;
-
-    std::vector<Token> tokens = parser.parseExpression(expr);
-
-    for(const Token& t : tokens)
+    if(!tree)
     {
-       
-        if(t.keywrd == INT)
-        {
-            operands.push(atoi(t.data.c_str()));
-        }
-        else if (t.keywrd == OPERATOR)
-        {
-            if(!operators.empty())
-            {
-                if(!t.data.compare(")"))
-                {
-                    //TODO: check if there are the right amount of brackets
-                    while(operators.top().compare("("))
-                    {
-                        performLastOp(operands, operators);
-                    }
-                    operators.pop();
-                }
-                else if(getOpPriority(t.data) <= getOpPriority(operators.top()))
-                {
-                    if(operators.top().compare("("))
-                    {
-                        performLastOp(operands, operators);
-                    }
-                }
-            }
-            if(t.data.compare(")"))
-            {
-                operators.push(t.data);
-                std::cout << "LAST ADDED OP " << t.data << std::endl;
-            }
-        }
+        return 0;
     }
-    while(!operators.empty())
+    bool noRoots = (!tree->left && !tree->right);
+    int value = 0;
+    if(tree->data.keywrd == INT)
     {
-        performLastOp(operands, operators);
+        value = atoi(tree->data.data.c_str());
     }
-    return operands.top();
+    else if(tree->data.keywrd == VAR)
+    {
+        value = varHandler.getValue(tree->data.data);
+    }
+    else
+    {
+        if(noRoots)
+        {
+            throw std::runtime_error("Invalid expression");
+            return 0;
+        }
+        return operation(evaluateTree(tree->left), evaluateTree(tree->right), tree->data.data);
+    }
+    if(noRoots)
+    {
+        return value;
+    }
+    if(tree->left)
+    {
+        evaluateTree(tree->left);
+    }
+    if(tree->right)
+    {
+        evaluateTree(tree->right);
+    }
 }
 
+int Interpreter::evaluateExpression(const std::string& expr)
+{
+    ExpressionTree::Node* tree;
+    tree = expTreeHelper.generate(expr);
+    return evaluateTree(tree);
+
+}
 
 void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::string>& operators)
 {
@@ -182,64 +179,9 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
     }
 }
 
-// this can be done better with a hash function or std::map
-// И оператори =, ==, !=, <, <=, >, >=, +, *, /, -, %, &&, ||, !,()
-// https://en.cppreference.com/w/cpp/language/operator_precedence
-int Interpreter::getOpPriority(const std::string& op)
-{
-    if(!op.compare("("))
-    {
-        return 0;
-    }
-    else if(!op.compare("="))
-    {
-        return 1;
-    }
-    else if(!op.compare("||"))
-    {
-        return 2;
-    }
-    else if(!op.compare("&&"))
-    {
-        return 3;
-    }
-    else if(!op.compare("==") || !op.compare("!="))
-    {
-        return 4;
-    }
-    else if(!op.compare("<") || !op.compare("<=") ||
-            !op.compare(">") || !op.compare(">="))
-    {
-        return 5;
-    }
-    else if(!op.compare("+") || !op.compare("-"))
-    {
-        return 6;
-    }
-    else if(!op.compare("*") || !op.compare("/") ||
-            !op.compare("%"))
-    {
-        return 7;
-    }
-    else if(!op.compare("!"))
-    {
-        return 8;
-    }
-    else if(!op.compare(")"))
-    {
-        return 9;
-    }
-    else
-    {
-        throw std::runtime_error("Invalid operator " + op);
-        return -1;
-    }
-    
-}
-
 //TODO MAKE THIS BETTER
 //EITHER WITH MAP OR UNORDERED_MAP
-int Interpreter::operation(int& x, int& y, const std::string& op)
+int Interpreter::operation(int x, int y, const std::string& op)
 {
     if(!op.compare("||"))
     {
