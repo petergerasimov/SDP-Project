@@ -46,6 +46,7 @@ int Interpreter::evaluateExpression(const std::string& expr)
             if(t.data.compare(")"))
             {
                 operators.push(t.data);
+                std::cout << "LAST ADDED OP " << t.data << std::endl;
             }
         }
     }

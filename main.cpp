@@ -19,13 +19,47 @@
 // Пример за програма, която намира сума на определен брой числа:
 
 #include "interpreter.hpp"
+#include "expressiontree.hpp"
+
+void genStream(ExpressionTree::Node* tree, std::stringstream& ss, int prevPos = -1)
+{
+    static int nodePos = 0;
+    nodePos++;
+    if(!tree) return;
+    if(prevPos != -1)
+    {
+        ss << "\tn" << prevPos << " -- n" << nodePos << ";\n";
+    }
+    ss << "\tn" << nodePos << " [label = \"" << tree->data.data << "\"];\n";
+    int currPos = nodePos;
+    genStream(tree->left, ss, currPos);
+    genStream(tree->right, ss, currPos);
+    
+}
+
+void toSVG(ExpressionTree::Node* tree, std::string filename)
+{
+    std::stringstream ss;
+    ss << "graph G {\n";
+    genStream(tree, ss);
+    ss << "}\n";
+    std::ofstream file;
+    file.open ("temp.dot");
+    file << ss.str();
+    file.close();
+    std::string cmd = "dot -Tsvg temp.dot -o " + filename;
+    system(cmd.c_str());
+    // system("rm temp.dot");
+}
 
 int main()
 {
     Interpreter i;
     std::string file = "test1.txt";
     std::vector<Token> tokens = i.parser.parseFile(file);
-
+    ExpressionTree ex;
+    toSVG(ex.generate("5+(1+5) + (1+2)"), "nodes.svg");
+    std::cout << "HERE" << std::endl;
     static const std::map<int, std::string> testMap = {
         {LET, "LET"},
         {READ, "READ"},
@@ -37,7 +71,8 @@ int main()
         {ENDIF, "ENDIF"},
         {ASSIGN, "ASSIGN"},
         {INT, "INT"},
-        {OPERATOR, "OPERATOR"}};
+        {OPERATOR, "OPERATOR"}
+    };
 
     // for(auto& t : tokens)
     // {
