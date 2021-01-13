@@ -124,7 +124,7 @@ int Interpreter::_assign(const std::string& str)
     bool foundEq = false;
     for(const char c : str)
     {
-        if(c == '=')
+        if(c == '=' && !foundEq)
         {
             foundEq = true;
             continue;
@@ -238,9 +238,13 @@ int Interpreter::operation(int x, int y, const std::string& op)
     {
         return x && y;
     }
-    else if(!op.compare("==") || !op.compare("!="))
+    else if(!op.compare("=="))
     {
         return x == y;
+    }
+    else if(!op.compare("!="))
+    {
+        return x != y;
     }
     else if(!op.compare("<"))
     {

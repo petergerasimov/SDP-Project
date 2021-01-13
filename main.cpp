@@ -76,19 +76,19 @@ int main()
         {OPERATOR, "OPERATOR"}
     };
 
-    // std::vector<Token> toes = i.parser.parseExpression("-5+(1+5) + (1+2)");
-    // for(auto& t : toes)
-    // {
-    //     auto it = testMap.find(t.keywrd);
-    //     if(it != testMap.end())
-    //     {
-    //         std::cout << it->second << " ";
-    //     } 
-    //     std::cout << t.data << std::endl;
-    // }
-    // std::cout << "HERE" << std::endl;
+    std::vector<Token> toes = i.parser.parseExpression("count = 1 == 5 + 3");
+    for(auto& t : toes)
+    {
+        auto it = testMap.find(t.keywrd);
+        if(it != testMap.end())
+        {
+            std::cout << it->second << " ";
+        } 
+        std::cout << t.data << std::endl;
+    }
+    std::cout << "HERE" << std::endl;
     ExpressionTree ex;
-    toSVG(ex.generate("name-5+(1+5) + (1+2)"), "nodes.svg");
+    toSVG(ex.generate("count < 0"), "nodes.svg");
     // for(auto& t : tokens)
     // {
     //     auto it = testMap.find(t.keywrd);
