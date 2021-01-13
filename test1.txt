@@ -3,4 +3,6 @@ something = 0
 LABEL repeat
 something = something + 1
 PRINT something
-GOTO repeat
+IF something < 10
+    GOTO repeat
+ENDIF

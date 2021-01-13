@@ -25,6 +25,8 @@ class Interpreter
         int getOpPriority(const std::string& op);
         int operation(int x, int y, const std::string& op);
         void performLastOp(std::stack<int>& operands, std::stack<std::string>& operators);
+        int getClosingToken(keyWord opening, keyWord closing,
+                            std::vector<Token>& tokens, size_t& start);
         //
         int _let(const std::string& str);
         int _read(const std::string& str);

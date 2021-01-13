@@ -103,8 +103,7 @@ int Interpreter::_done(const std::string& str)
 }
 int Interpreter::_if(const std::string& str)
 {
-    std::cout << str;
-    return 1;
+    return evaluateExpression(str);
 }
 int Interpreter::_else(const std::string& str)
 {
@@ -166,6 +165,7 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
                     //string that it finds
                     if(tokens[j].data == tokens[i].data)
                     {
+                        // the i++ from the for loop makes it the right index
                         i = --j;
                         continue;
                     }
@@ -174,7 +174,31 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
         }
         else if(tokens[i].keywrd < numOfFuncs)
         {
-            (this->*functions[tokens[i].keywrd])(tokens[i].data);
+            int value = (this->*functions[tokens[i].keywrd])(tokens[i].data);
+            // Note: maybe i should add a condition for else if
+            // Or maybe not
+            if(tokens[i].keywrd == IF)
+            {
+                int endifIndex = getClosingToken(IF, ENDIF, tokens, i);
+                if(endifIndex < 0)
+                {
+                    throw std::runtime_error("Couldn't find match ENDIF");
+                }
+                if(!value)
+                {
+                    int elseIndex = getClosingToken(IF, ELSE, tokens, i);
+                    if(elseIndex > 0)
+                    {
+                        i = --elseIndex;
+                    }
+                    else
+                    {
+                        i = --endifIndex;
+                    }
+                    
+                }
+                
+            }
         }
     }
 }
@@ -237,4 +261,27 @@ int Interpreter::operation(int x, int y, const std::string& op)
         return -1;
     }
     
+}
+
+int Interpreter::getClosingToken(keyWord opening, keyWord closing,
+                            std::vector<Token>& tokens, size_t& start)
+{
+    size_t sz = tokens.size();
+    int count = 0;
+    for(int i = start; i < sz; i++)
+    {
+        if(tokens[i].keywrd == opening)
+        {
+            count++;
+        }
+        else if(tokens[i].keywrd == closing)
+        {
+            count--;
+            if(count == 0)
+            {
+                return i;
+            }
+        }
+    }
+    return -1;
 }
