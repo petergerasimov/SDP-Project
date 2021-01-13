@@ -18,7 +18,6 @@
 
 #include "interpreter.hpp"
 #include <iostream>
-#include <sstream>
 
 void genStream(ExpressionTree::Node* tree, std::stringstream& ss, int prevPos = -1)
 {

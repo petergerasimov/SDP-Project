@@ -75,21 +75,6 @@ bool Parser::isNumber(const char &c)
     return c >= '0' && c <= '9';
 }
 
-bool Parser::isBracket(const char &c)
-{
-    return c == '(' || c == ')';
-}
-
-bool Parser::isBlank(const char &c)
-{
-    return c == ' ' || c == '\t';
-}
-
-bool Parser::isNewline(const char &c)
-{
-    return c == '\r' || c == '\n';
-}
-
 bool Parser::isValidVar(const char& c)
 {
     return (c >= 'a' && c <= 'z') ||

@@ -20,9 +20,6 @@ class Parser
         std::vector<Token> parseExpression(const std::string& expr);
     private:
         bool isNumber(const char& c);
-        bool isBracket(const char& c);
-        bool isBlank(const char& c);
-        bool isNewline(const char& c);
         bool isValidVar(const char& c);
 
         keyWord numOrVar(std::string& str);
