@@ -312,3 +312,33 @@ int Interpreter::getClosingToken(keyWord opening, keyWord closing,
     }
     return -1;
 }
+
+void Interpreter::repl()
+{
+    std::cout << "Started in REPL mode\n"
+              << "Type \"run\" when you finish coding\n"
+              << "Type \"exit\" to exit\n";
+    
+    std::string toParse;
+    std::vector<Token> tokens;
+    while(true)
+    {
+        std::getline(std::cin, toParse);
+        if(toParse == "run")
+        {
+            interpretTokens(tokens);
+            // Not sure if prev tokens should clear after runing
+            // tokens.clear(); 
+        }
+        else if(toParse == "exit")
+        {
+            break;
+        }
+        else
+        {
+            std::vector<Token> toAppend;
+            toAppend = parser.parseString(toParse);
+            tokens.insert(tokens.end(), toAppend.begin(), toAppend.end());
+        }
+    }
+}

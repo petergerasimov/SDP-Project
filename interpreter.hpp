@@ -19,7 +19,7 @@ class Interpreter
         int evaluateTree(ExpressionTree::Node* tree);
         int evaluateExpression(const std::string& expr);
         void interpretTokens(std::vector<Token> tokens);
-
+        void repl();
     private:
         VarHandler varHandler;
         int getOpPriority(const std::string& op);

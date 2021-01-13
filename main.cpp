@@ -55,7 +55,7 @@ int main()
     Interpreter i;
     std::string file = "test1.txt";
     std::vector<Token> tokens = i.parser.parseFile(file);
-
+    i.repl();
     static const std::map<int, std::string> testMap = {
         {LET, "LET"},
         {READ, "READ"},
