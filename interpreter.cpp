@@ -45,6 +45,7 @@ int Interpreter::evaluateTree(ExpressionTree::Node* tree)
     {
         evaluateTree(tree->right);
     }
+    return 0;
 }
 
 int Interpreter::evaluateExpression(const std::string& expr)
