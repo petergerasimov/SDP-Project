@@ -94,8 +94,7 @@ int Interpreter::_print(const std::string& str)
 }
 int Interpreter::_while(const std::string& str)
 {
-    std::cout << str;
-    return 1;
+    return evaluateExpression(str);
 }
 int Interpreter::_done(const std::string& str)
 {
@@ -154,6 +153,7 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
                                                _else, _endif, _assign};
     
     int sz = tokens.size();
+    std::stack<int> whileIndicies;
     for(size_t i = 0; i < sz; i++)
     {
         if(tokens[i].keywrd == GOTO)
@@ -168,7 +168,6 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
                     {
                         // the i++ from the for loop makes it the right index
                         i = --j;
-                        continue;
                     }
                 }
             }
@@ -196,9 +195,32 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
                     {
                         i = --endifIndex;
                     }
-                    
                 }
-                
+            }
+            else if(tokens[i].keywrd == WHILE)
+            {
+                int doneIndex = getClosingToken(WHILE, DONE, tokens, i);
+                if(doneIndex < 0)
+                {
+                    throw std::runtime_error("Couldn't find match DONE");
+                }
+                if(!value)
+                {
+                    i = --doneIndex;
+                }
+                else
+                {
+                    whileIndicies.push(i);
+                }
+            }
+            else if(tokens[i].keywrd == DONE)
+            {
+                if(!whileIndicies.empty())
+                {
+                    int gotoWhile = whileIndicies.top();
+                    whileIndicies.pop();
+                    i = --gotoWhile;
+                }
             }
         }
     }
