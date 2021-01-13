@@ -1,5 +1,3 @@
-#include <iostream>
-
 // Да се напише интерпретатор на езика, определен със запазените думи:
 // LАBEL, GOTO, LET, READ, PRINT, IF, ENDIF, ELSE, WHILE, DONE
 // И оператори =, ==, !=, <, <=, >, >=, +, *, /, -, %, &&, ||, !,()
@@ -19,7 +17,8 @@
 // Пример за програма, която намира сума на определен брой числа:
 
 #include "interpreter.hpp"
-#include "expressiontree.hpp"
+#include <iostream>
+#include <sstream>
 
 void genStream(ExpressionTree::Node* tree, std::stringstream& ss, int prevPos = -1)
 {
@@ -57,8 +56,7 @@ int main()
     Interpreter i;
     std::string file = "test1.txt";
     std::vector<Token> tokens = i.parser.parseFile(file);
-    
-    
+
     static const std::map<int, std::string> testMap = {
         {LET, "LET"},
         {READ, "READ"},
@@ -77,19 +75,7 @@ int main()
     };
 
     std::vector<Token> toes = i.parser.parseExpression("count = 1 == 5 + 3");
-    for(auto& t : toes)
-    {
-        auto it = testMap.find(t.keywrd);
-        if(it != testMap.end())
-        {
-            std::cout << it->second << " ";
-        } 
-        std::cout << t.data << std::endl;
-    }
-    std::cout << "HERE" << std::endl;
-    ExpressionTree ex;
-    toSVG(ex.generate("count < 0"), "nodes.svg");
-    // for(auto& t : tokens)
+    // for(auto& t : toes)
     // {
     //     auto it = testMap.find(t.keywrd);
     //     if(it != testMap.end())
@@ -98,6 +84,18 @@ int main()
     //     } 
     //     std::cout << t.data << std::endl;
     // }
+    std::cout << "HERE" << std::endl;
+    ExpressionTree ex;
+    toSVG(ex.generate("count < 0"), "nodes.svg");
+    for(auto& t : tokens)
+    {
+        auto it = testMap.find(t.keywrd);
+        if(it != testMap.end())
+        {
+            std::cout << it->second << " ";
+        } 
+        std::cout << t.data << std::endl;
+    }
 
     try
     {

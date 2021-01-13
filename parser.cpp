@@ -8,12 +8,13 @@ std::vector<Token> Parser::parseFile(std::string &filename)
         std::stringstream ss;
         ss << file.rdbuf();
         file.close();
-        return parseString(ss.str());
+        return parseStream(ss);
     }
     std::vector<Token> empty;
     return empty;
 }
-std::vector<Token> Parser::parseString(const std::string &str)
+
+std::vector<Token> Parser::parseStream(std::stringstream& ss)
 {
     //enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, VAR, OPERATOR};
     static const std::map<std::string, int> keyWordMap = {
@@ -25,87 +26,48 @@ std::vector<Token> Parser::parseString(const std::string &str)
         {"IF", IF},
         {"ELSE", ELSE},
         {"ENDIF", ENDIF},
-        {"ASSIGN", ASSIGN},
         {"GOTO", GOTO},
         {"LABEL", LABEL}
-        // {"INT", INT},
-        // {"OPERATOR", OPERATOR}
     };
 
     std::vector<Token> toReturn;
 
-    //std::cout << str;
-    size_t sz = str.size();
-    std::string buff;
-    std::string buffPrev;
-    keyWord key;
-    bool foundKeyword = false;
-    bool pushBlank = false;
-    bool pushedBlank = false;
-    for (size_t i = 0; i < sz; i++)
+    while(!ss.eof())
     {
-        bool isLast = i == sz - 1;
-        buff.push_back(str[i]);
-        if (isNewline(str[i]) || isLast || pushBlank)
+        std::string buff;
+        ss >> buff;
+        std::map<std::string, int>::const_iterator it;
+        it = keyWordMap.find(buff);
+        if(it != keyWordMap.end())
         {
-            if (foundKeyword)
+            if(it->second != DONE && it->second != ENDIF)
             {
-                if(pushBlank)
-                {
-                    toReturn.push_back({key, ""});
-                    pushBlank = false;
-                }
-                else
-                {
-                    removeBlanks(buff);
-                    toReturn.push_back({key, buff});
-                    
-                }
-                buff.clear();
-                foundKeyword = false;
-            }        
-        }
-        if(isspace(str[i]))
-        {
-            if (!foundKeyword || pushedBlank)
+                std::string expr;
+                std::getline(ss, expr);
+                removeBlanks(expr);
+                toReturn.push_back({(keyWord)it->second, expr});
+            }
+            else
             {
-                pushedBlank = false;
-                removeBlanks(buff);
-                if (!buff.empty())
-                {
-                    std::map<std::string, int>::const_iterator it = keyWordMap.find(buff);
-                    if (it != keyWordMap.end())
-                    {
-                        key = (keyWord)it->second;
-                        foundKeyword = true;
-                        pushedBlank = pushBlank = (key == ENDIF || key == DONE);
-                        buff.clear();
-                    }
-                    else if (!buff.compare("="))
-                    {
-                        key = ASSIGN;
-                        foundKeyword = true;
-                        buff = buffPrev + " " + buff;
-                    }
-                    else
-                    {
-                        buffPrev = buff;
-                        buff.clear();
-                    }
-                }
+                toReturn.push_back({(keyWord)it->second, ""});
             }
         }
-    }
-    //taking care of ending condition keyword being last
-    if(!buff.empty())
-    {
-        std::map<std::string, int>::const_iterator it = keyWordMap.find(buff);
-        if (it != keyWordMap.end())
+        else
         {
-            toReturn.push_back({(keyWord)it->second, ""});
+            std::string expr;
+            std::getline(ss, expr);
+            expr = buff + expr;
+            removeBlanks(expr);
+            toReturn.push_back({ASSIGN, expr});
         }
     }
     return toReturn;
+}
+std::vector<Token> Parser::parseString(const std::string &str)
+{
+    std::stringstream ss;
+    ss << str;
+    return parseStream(ss);
 }
 
 bool Parser::isNumber(const char &c)

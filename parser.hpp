@@ -16,6 +16,7 @@ class Parser
     public:
         std::vector<Token> parseFile(std::string& filename);
         std::vector<Token> parseString(const std::string& str);
+        std::vector<Token> parseStream(std::stringstream& ss);
         std::vector<Token> parseExpression(const std::string& expr);
     private:
         bool isNumber(const char& c);

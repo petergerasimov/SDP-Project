@@ -1,3 +1,15 @@
 LET count
-count = 1 == 1
-PRINT count
+READ count
+IF count < 0
+    GOTO end
+ENDIF
+LET sum
+sum = 0
+LET x
+WHILE count > 0
+    READ x
+    sum = sum + x
+    count = count - 1
+DONE
+PRINT sum
+LABEL end
