@@ -22,7 +22,7 @@ class ExpressionTree
         Parser parser;
         int getOpPriority(const std::string& op);
         void constructBinOpNode(std::stack<Node*>& operands, 
-                                std::stack<std::string>& operators);
+                                std::string& op);
 };
 
 #endif //__EXPRESSION_TREE_HPP__

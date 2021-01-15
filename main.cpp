@@ -55,7 +55,7 @@ int main()
     Interpreter i;
     std::string file = "test1.txt";
     std::vector<Token> tokens = i.parser.parseFile(file);
-    i.repl();
+    // i.repl();
     static const std::map<int, std::string> testMap = {
         {LET, "LET"},
         {READ, "READ"},
@@ -85,7 +85,7 @@ int main()
     // }
     std::cout << "HERE" << std::endl;
     ExpressionTree ex;
-    toSVG(ex.generate("count < 0"), "nodes.svg");
+    toSVG(ex.generate("3 * 5 - 3 * 7 + 5 + 4 - 7 / 2"), "nodes.svg");
     for(auto& t : tokens)
     {
         auto it = testMap.find(t.keywrd);

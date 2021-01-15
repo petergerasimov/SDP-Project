@@ -16,6 +16,11 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
         }
         else if (t.keywrd == OPERATOR)
         {
+            std::string prevOp;
+            if(!operators.empty())
+            {
+                prevOp = operators.top();
+            }
             if(t.data.compare(")"))
             {
                 operators.push(t.data);
@@ -27,16 +32,24 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                     //TODO: check if there are the right amount of brackets
                     while(operators.top().compare("("))
                     {
-                        constructBinOpNode(operands, operators);
+                        constructBinOpNode(operands, operators.top());
+                        operators.pop();
                     }
                     operators.pop();
                     // continue;
                 }
-                else if(getOpPriority(t.data) < getOpPriority(operators.top()))
+                //priorities are messed up
+                // else if(getOpPriority(t.data) < getOpPriority(operators.top()))
+                // if(!prevOp.empty()) std::cout << getOpPriority(prevOp) << " < " << getOpPriority(operators.top()) << std::endl;
+                if(!prevOp.empty() && getOpPriority(prevOp) > getOpPriority(operators.top()))
                 {
                     if(operators.top().compare("("))
                     {
-                        constructBinOpNode(operands, operators);
+                        constructBinOpNode(operands, prevOp);
+                        std::string tmp = operators.top();
+                        operators.pop();
+                        operators.pop();
+                        operators.push(tmp);
                     }
                 }
             }
@@ -45,13 +58,14 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
     }
     while(!operators.empty())
     {
-        constructBinOpNode(operands, operators);
+        constructBinOpNode(operands, operators.top());
+        operators.pop();
     }
     
     return operands.top();
 }
 void ExpressionTree::constructBinOpNode(std::stack<Node*>& operands, 
-                                        std::stack<std::string>& operators)
+                                        std::string& op)
 {
     if(operands.size() < 2)
     {
@@ -63,9 +77,8 @@ void ExpressionTree::constructBinOpNode(std::stack<Node*>& operands,
     operands.pop();
     Node* lhs = operands.top();
     operands.pop();
-    Node* stitched = new Node({OPERATOR, operators.top()}, lhs, rhs);
+    Node* stitched = new Node({OPERATOR, op}, lhs, rhs);
     operands.push(stitched);
-    operators.pop();
 }
 void ExpressionTree::optimize(Node* exprTree)
 {

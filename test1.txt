@@ -1,15 +1,3 @@
-LET count
-READ count
-IF count < 0
-    GOTO end
-ENDIF
 LET sum
-sum = 0
-LET x
-WHILE count > 0
-    READ x
-    sum = sum + x
-    count = count - 1
-DONE
+sum = 3 * 5 - (3 * 5 + 2)
 PRINT sum
-LABEL end
