@@ -7,6 +7,8 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
 
     std::vector<Token> tokens = parser.parseExpression(expr);
 
+    // TODO: i think this should be read from end to begin
+    // To fix priorities
     for(const Token& t : tokens)
     {
         if(t.keywrd == INT || t.keywrd == VAR)
