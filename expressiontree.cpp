@@ -9,30 +9,31 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
 
     // TODO: i think this should be read from end to begin
     // To fix priorities
-    for(const Token& t : tokens)
+    int sz = tokens.size();
+    for(int i = sz - 1; i >= 0; i--)
     {
-        if(t.keywrd == INT || t.keywrd == VAR)
+        if(tokens[i].keywrd == INT || tokens[i].keywrd == VAR)
         {
-            Node* toAdd = new Node(t, nullptr, nullptr);
+            Node* toAdd = new Node(tokens[i], nullptr, nullptr);
             operands.push(toAdd);
         }
-        else if (t.keywrd == OPERATOR)
+        else if (tokens[i].keywrd == OPERATOR)
         {
             std::string prevOp;
             if(!operators.empty())
             {
                 prevOp = operators.top();
             }
-            if(t.data.compare(")"))
+            if(tokens[i].data.compare("("))
             {
-                operators.push(t.data);
+                operators.push(tokens[i].data);
             }
             if(!operators.empty())
             {
-                if(!t.data.compare(")"))
+                if(!tokens[i].data.compare("("))
                 {
                     //TODO: check if there are the right amount of brackets
-                    while(operators.top().compare("("))
+                    while(operators.top().compare(")"))
                     {
                         constructBinOpNode(operands, operators.top());
                         operators.pop();
@@ -45,7 +46,7 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                 // if(!prevOp.empty()) std::cout << getOpPriority(prevOp) << " < " << getOpPriority(operators.top()) << std::endl;
                 if(!prevOp.empty() && getOpPriority(prevOp) > getOpPriority(operators.top()))
                 {
-                    if(operators.top().compare("("))
+                    if(operators.top().compare(")"))
                     {
                         constructBinOpNode(operands, prevOp);
                         std::string tmp = operators.top();
@@ -75,9 +76,9 @@ void ExpressionTree::constructBinOpNode(std::stack<Node*>& operands,
         std::cout << "Can't find 2 operands" << std::endl;
         return;
     }
-    Node* rhs = operands.top();
-    operands.pop();
     Node* lhs = operands.top();
+    operands.pop();
+    Node* rhs = operands.top();
     operands.pop();
     Node* stitched = new Node({OPERATOR, op}, lhs, rhs);
     operands.push(stitched);

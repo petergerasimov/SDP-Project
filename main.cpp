@@ -83,18 +83,18 @@ int main()
     //     } 
     //     std::cout << t.data << std::endl;
     // }
-    std::cout << "HERE" << std::endl;
+    // std::cout << "HERE" << std::endl;
     ExpressionTree ex;
-    toSVG(ex.generate("3 * 5 - 3 * 7 + 5 + 4 - 7 / 2"), "nodes.svg");
-    for(auto& t : tokens)
-    {
-        auto it = testMap.find(t.keywrd);
-        if(it != testMap.end())
-        {
-            std::cout << it->second << " ";
-        } 
-        std::cout << t.data << std::endl;
-    }
+    // toSVG(ex.generate("3 * 5 - (8 * 7 + 5 + 4 - 7 / 2)"), "nodes.svg");
+    // for(auto& t : tokens)
+    // {
+    //     auto it = testMap.find(t.keywrd);
+    //     if(it != testMap.end())
+    //     {
+    //         std::cout << it->second << " ";
+    //     } 
+    //     std::cout << t.data << std::endl;
+    // }
 
     try
     {

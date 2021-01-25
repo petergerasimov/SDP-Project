@@ -1,3 +1,10 @@
-LET sum
-sum = 3 * 5 - (3 * 5 + 2)
-PRINT sum
+LET a
+a = 0
+LET to
+READ to
+WHILE a < to
+    a = a + 1
+    IF a % 2 == 0
+        PRINT a
+    ENDIF
+DONE
