@@ -149,11 +149,13 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
     // enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};;
     // INT and OPERATOR are for expressions only
     static const size_t numOfFuncs = 9;
-    static const func functions[numOfFuncs] = {&Interpreter::_let, &Interpreter::_read, 
-                                               &Interpreter::_print, &Interpreter::_while, 
-                                               &Interpreter::_done, &Interpreter::_if, 
-                                               &Interpreter::_else, &Interpreter::_endif, 
-                                               &Interpreter::_assign};
+    static const func functions[numOfFuncs] = {
+        &Interpreter::_let,   &Interpreter::_read, 
+        &Interpreter::_print, &Interpreter::_while, 
+        &Interpreter::_done,  &Interpreter::_if, 
+        &Interpreter::_else,  &Interpreter::_endif, 
+        &Interpreter::_assign
+    };
     
     int sz = tokens.size();
     std::stack<int> whileIndicies;
@@ -279,6 +281,10 @@ int Interpreter::operation(int x, int y, const std::string& op)
     }
     else if(!op.compare("/"))
     {
+        if(y == 0)
+        {
+            throw std::runtime_error("Division by zero!");
+        }
         return x / y;
     }
     else if(!op.compare("%"))

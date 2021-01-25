@@ -35,16 +35,15 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                     //TODO: check if there are the right amount of brackets
                     while(operators.top().compare(")"))
                     {
+                        // std::cout << operators.top() << "<- top prev ->" << prevOp << std::endl;
+                        // std::cout << "operand size " << operands.size() << std::endl;
                         constructBinOpNode(operands, operators.top());
                         operators.pop();
                     }
-                    operators.pop();
-                    // continue;
+                    // operators.pop();
                 }
-                //priorities are messed up
-                // else if(getOpPriority(t.data) < getOpPriority(operators.top()))
-                // if(!prevOp.empty()) std::cout << getOpPriority(prevOp) << " < " << getOpPriority(operators.top()) << std::endl;
-                if(!prevOp.empty() && getOpPriority(prevOp) > getOpPriority(operators.top()))
+                // This thing works for now :DD 
+                if(operands.size() >= 2 && !prevOp.empty() && getOpPriority(prevOp) > getOpPriority(operators.top()))
                 {
                     if(operators.top().compare(")"))
                     {
@@ -80,6 +79,7 @@ void ExpressionTree::constructBinOpNode(std::stack<Node*>& operands,
     operands.pop();
     Node* rhs = operands.top();
     operands.pop();
+    // std::cout << op << ": " << lhs->data.data << " and " << rhs->data.data << std::endl;
     Node* stitched = new Node({OPERATOR, op}, lhs, rhs);
     operands.push(stitched);
 }
