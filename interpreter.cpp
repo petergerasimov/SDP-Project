@@ -149,8 +149,11 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
     // enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};;
     // INT and OPERATOR are for expressions only
     static const size_t numOfFuncs = 9;
-    static const func functions[numOfFuncs] = {_let, _read, _print, _while, _done, _if, 
-                                               _else, _endif, _assign};
+    static const func functions[numOfFuncs] = {&Interpreter::_let, &Interpreter::_read, 
+                                               &Interpreter::_print, &Interpreter::_while, 
+                                               &Interpreter::_done, &Interpreter::_if, 
+                                               &Interpreter::_else, &Interpreter::_endif, 
+                                               &Interpreter::_assign};
     
     int sz = tokens.size();
     std::stack<int> whileIndicies;
