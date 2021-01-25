@@ -3,7 +3,7 @@ a = 0
 LET to
 READ to
 WHILE a < to
-    a = a + (1 + ( 2 - 3)* 2 + 1)
+    a = a + (1 + ( 2 - 3)* 2 + 1) + 1
     IF a % 2 == 0
         PRINT a
     ENDIF
