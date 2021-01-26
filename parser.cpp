@@ -58,7 +58,11 @@ std::vector<Token> Parser::parseStream(std::stringstream& ss)
             std::getline(ss, expr);
             expr = buff + expr;
             removeBlanks(expr);
-            toReturn.push_back({ASSIGN, expr});
+            if(!expr.empty())
+            {
+                toReturn.push_back({ASSIGN, expr});
+            }
+            
         }
     }
     return toReturn;

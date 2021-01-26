@@ -70,8 +70,11 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
         constructBinOpNode(operands, operators.top());
         operators.pop();
     }
-    
-    return operands.top();
+    if(!operands.empty())
+    {
+        return operands.top();
+    }
+    return nullptr;
 }
 void ExpressionTree::constructBinOpNode(std::stack<Node*>& operands, 
                                         std::string& op)
