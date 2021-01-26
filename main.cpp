@@ -74,7 +74,7 @@ int main()
     };
 
     ExpressionTree ex;
-    toSVG(ex.generate("a + (1 + ( 2 - 3)* 2 + 1)"), "nodes.svg");
+    toSVG(ex.generate("a[100] + a[110] - (3520-2653)/(283+836)*5"), "nodes.svg");
 
     try
     {

@@ -82,36 +82,51 @@ bool Parser::isValidVar(const char& c)
            (c == '_');
 }
 
-keyWord Parser::numOrVar(std::string& str)
+keyWord Parser::numOrVar(const std::string& str)
 {
+    size_t sz = str.size();
     if(str.empty())
     {
-        //EMPTY STRING IS 0
+        throw std::runtime_error("Empty string is not a variable");
+    }
+    if(str[0] == '-' || isNumber(str[0]))
+    {
+        for(size_t i = 1; i < sz; i++)
+        {
+            if(!isNumber(str[i]))
+            {
+                throw std::runtime_error(str + " is not a valid variable.");
+            }
+        }
         return INT;
     }
-    bool isNum = false;
-    bool isVar = false;
-    bool isBad = false;
-    for(const char& c : str)
+    else if(isValidVar(str[0]))
     {
-        if(isNumber(c) || c == '-')
+        for(size_t i = 1; i < sz; i++)
         {
-            isNum = true;
+            if(str[i] == '[')
+            {
+                if(str[sz - 1] == ']')
+                {
+                    numOrVar(str.substr(i + 1, sz - i - 2));
+                }
+                else
+                {
+                    throw std::runtime_error(str + " is not a valid variable.");
+                }
+            }
+            else if(!isValidVar(str[i]) && !isNumber(str[i]) && !(str[i] == ']'))
+            {
+                throw std::runtime_error(str + " is not a valid variable.");
+            }
         }
-        else if(isValidVar(c))
-        {
-            isVar = true;
-        }
-        else
-        {
-            isBad = true;
-        }
+        return VAR;
     }
-    if(isBad || (isNum && isVar))
+    else
     {
-        throw std::runtime_error(str + " is not a valid variable name");
+        throw std::runtime_error(str + " is not a valid variable.");
     }
-    return isNum ? INT : VAR;
+    return VAR;
 }
 
 void Parser::removeBlanks(std::string &str)

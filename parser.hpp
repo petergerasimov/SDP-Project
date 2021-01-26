@@ -22,7 +22,7 @@ class Parser
         bool isNumber(const char& c);
         bool isValidVar(const char& c);
 
-        keyWord numOrVar(std::string& str);
+        keyWord numOrVar(const std::string& str);
 
         void removeBlanks(std::string& str);
 
