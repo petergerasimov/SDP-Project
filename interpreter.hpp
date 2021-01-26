@@ -28,6 +28,10 @@ class Interpreter
         int getClosingToken(keyWord opening, keyWord closing,
                             std::vector<Token>& tokens, size_t& start);
         //
+        std::string getArrayExpr(const std::string& expr);
+        std::string getArrayName(const std::string& expr);
+        int getArrayIndex(const std::string& expr);
+        //
         int _let(const std::string& str);
         int _read(const std::string& str);
         int _print(const std::string& str);

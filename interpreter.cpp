@@ -14,7 +14,9 @@ int Interpreter::evaluateTree(ExpressionTree::Node* tree)
     }
     else if(tree->data.keywrd == VAR)
     {
-        value = varHandler.getValue(tree->data.data);
+        // TODO: optimize for variables
+        value = varHandler.getValue(getArrayName(tree->data.data), 
+                                    getArrayIndex(tree->data.data));
     }
     else
     {
@@ -45,7 +47,6 @@ int Interpreter::evaluateExpression(const std::string& expr)
     ExpressionTree::Node* tree;
     tree = expTreeHelper.generate(expr);
     return evaluateTree(tree);
-
 }
 
 void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::string>& operators)
@@ -61,26 +62,71 @@ void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::strin
     operands.push(operation(y, x, operators.top()));
     operators.pop();
 }
+
+
+// TODO: add this to the parser
+std::string Interpreter::getArrayExpr(const std::string& expr)
+{
+    std::string emptyExpr;
+    size_t sz = expr.size();
+    for(size_t i = 0; i < sz; i++)
+    {
+        if(expr[i] == '[')
+        {
+            if(expr[sz - 1] == ']')
+            {
+                return expr.substr(i + 1, sz - i - 2);
+            }
+        }
+    }
+    return emptyExpr;
+}
+
+std::string Interpreter::getArrayName(const std::string& expr)
+{
+    size_t sz = expr.size();
+    for(size_t i = 0; i < sz; i++)
+    {
+        if(expr[i] == '[')
+        {
+            if(expr[sz - 1] == ']')
+            {
+                return expr.substr(0, i);
+            }
+        }
+    }
+    return expr;
+}
+
+int Interpreter::getArrayIndex(const std::string& expr)
+{
+    std::string arrExpr = getArrayExpr(expr);
+    size_t index = 0;
+    if(!arrExpr.empty())
+    {
+        index = evaluateExpression(arrExpr);
+    }
+    return index;
+}
+
 //:))) in class function pointer ;))))))))
 typedef int (Interpreter::*func)(const std::string& str);
 int Interpreter::_let(const std::string& str)
 {
-    //TODO add arrays
-    varHandler.add(str);
+    varHandler.add(getArrayName(str), getArrayIndex(str));
     return 1;
 }
 int Interpreter::_read(const std::string& str)
 {
-    //TODO make it work with arrays
     int tmp;
     std::cin >> tmp;
-    varHandler.changeValue(str, tmp);
+    varHandler.changeValue(getArrayName(str), tmp, getArrayIndex(str));
     return 1;
 }
 int Interpreter::_print(const std::string& str)
 {
-    //std::cout << evaluateExpression(str);
-    std::cout << varHandler.getValue(str);
+    std::cout << evaluateExpression(str);
+    // std::cout << varHandler.getValue(str);
     std::cout << std::endl;
     return 1;
 }
@@ -109,7 +155,7 @@ int Interpreter::_endif(const std::string& str)
 }
 int Interpreter::_assign(const std::string& str)
 {
-    //TODO make it work with arrays
+    //TODO: make it work with arrays
     //Also redesign wtih new expression evaluator
     std::string buffVar;
     std::string buffExpr;
@@ -132,7 +178,7 @@ int Interpreter::_assign(const std::string& str)
         
     }
     int exprValue = evaluateExpression(buffExpr);
-    varHandler.changeValue(buffVar, exprValue);
+    varHandler.changeValue(getArrayName(buffVar), exprValue, getArrayIndex(buffVar));
     return 1;
 }
 
@@ -223,7 +269,7 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
     }
 }
 
-//TODO MAKE THIS BETTER
+//TODO: MAKE THIS BETTER
 //EITHER WITH MAP OR UNORDERED_MAP
 int Interpreter::operation(int x, int y, const std::string& op)
 {
