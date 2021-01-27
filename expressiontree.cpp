@@ -12,6 +12,7 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
     int sz = tokens.size();
     for(int i = sz - 1; i >= 0; i--)
     {
+        // If token is an int or var, add it
         if(tokens[i].keywrd == INT || tokens[i].keywrd == VAR)
         {
             Node* toAdd = new Node(tokens[i], nullptr, nullptr);
@@ -20,16 +21,20 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
         else if (tokens[i].keywrd == OPERATOR)
         {
             std::string prevOp;
+            // Get the prev operator
             if(!operators.empty() && operators.top().compare(")"))
             {
                 prevOp = operators.top();
             }
+            // Skip opening bracket when adding
             if(tokens[i].data.compare("("))
             {
                 operators.push(tokens[i].data);
             }
             if(!operators.empty())
             {
+                // If token is opening bracket
+                // Do all operations until closing bracket
                 if(!tokens[i].data.compare("("))
                 {
                     //TODO: check if there are the right amount of brackets
@@ -40,7 +45,7 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                     }
                     operators.pop();
                 }
-                // This thing works for now :DD 
+                // If prev op is of higher priority build tree up
                 if(operands.size() >= 2 && !prevOp.empty())
                 {
                     if(operators.top().compare(")"))
@@ -60,6 +65,8 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
             
         }
     }
+    // If there are any operators left
+    // Build the tree up further
     while(!operators.empty())
     {
         if(!operators.top().compare(")"))

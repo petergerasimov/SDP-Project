@@ -76,20 +76,20 @@ int main()
     ExpressionTree ex;
     toSVG(ex.generate("a[100] + a[110] - (3520-2653)/(283+836)*5"), "nodes.svg");
 
-    for(auto& t : tokens)
-    {
-        auto it = testMap.find(t.keywrd);
-        if(it != testMap.end())
-        {
-            std::cout << it->second << " " <<  t.data << std::endl;
-        }
-        else
-        {
-            std::cout << "None" << " " <<  t.data << std::endl;
-        }
+    // for(auto& t : tokens)
+    // {
+    //     auto it = testMap.find(t.keywrd);
+    //     if(it != testMap.end())
+    //     {
+    //         std::cout << it->second << " " <<  t.data << std::endl;
+    //     }
+    //     else
+    //     {
+    //         std::cout << "None" << " " <<  t.data << std::endl;
+    //     }
         
-    }
-    std::cout << "End of tokens" << std::endl;
+    // }
+    // std::cout << "End of tokens" << std::endl;
 
     try
     {
