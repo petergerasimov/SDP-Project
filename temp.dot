@@ -1,15 +1,11 @@
 graph G {
-	n1 [label = "/"];
-	n1 -- n2;
-	n2 [label = "+"];
-	n2 -- n3;
-	n3 [label = "5"];
-	n2 -- n6;
-	n6 [label = "*"];
-	n6 -- n7;
-	n7 [label = "5"];
-	n6 -- n10;
-	n10 [label = "5"];
-	n1 -- n13;
-	n13 [label = "7"];
+	n20 [label = "+"];
+	n20 -- n21;
+	n21 [label = "5"];
+	n20 -- n24;
+	n24 [label = "-"];
+	n24 -- n25;
+	n25 [label = "5"];
+	n24 -- n28;
+	n28 [label = "-2"];
 }

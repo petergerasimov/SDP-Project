@@ -74,7 +74,11 @@ int main()
     };
 
     ExpressionTree ex;
-    toSVG(ex.generate("5+5*5/7"), "nodes.svg");
+    ExpressionTree::Node* tree;
+    tree = ex.generate("(7-2) + (5 - (3-5))");
+    toSVG(tree, "nodes.svg");
+    i.optimizeTree(tree);
+    toSVG(tree, "optimized.svg");
 
     // for(auto& t : tokens)
     // {

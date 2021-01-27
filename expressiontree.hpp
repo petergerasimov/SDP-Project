@@ -17,7 +17,6 @@ class ExpressionTree
                 data(data), left(left), right(right) {}
         };
         Node* generate(std::string expr);
-        void optimize(Node* exprTree);
     private:
         Parser parser;
         int getOpPriority(const std::string& op);

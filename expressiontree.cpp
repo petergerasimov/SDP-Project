@@ -122,10 +122,7 @@ void ExpressionTree::constructBinOpNode(std::stack<Node*>& operands,
     Node* stitched = new Node({OPERATOR, op}, lhs, rhs);
     operands.push(stitched);
 }
-void ExpressionTree::optimize(Node* exprTree)
-{
 
-}
 int ExpressionTree::getOpPriority(const std::string& op)
 {
     static const std::map<std::string, int> opPriority = {

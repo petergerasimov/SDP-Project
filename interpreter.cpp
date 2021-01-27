@@ -46,6 +46,73 @@ int Interpreter::evaluateTree(ExpressionTree::Node* tree)
     return 0;
 }
 
+void Interpreter::optimizeTree(ExpressionTree::Node* tree)
+{
+    if(!tree)
+    {
+        return;
+    }
+    bool noRoots = (!tree->left && !tree->right);
+    if(tree->data.keywrd == INT)
+    {
+        return;
+    }
+    else if(tree->data.keywrd == VAR)
+    {
+        return;
+    }
+    else
+    {
+        if(noRoots)
+        {
+            throw std::runtime_error("Invalid expression");
+            return;
+        }
+        else if(!tree->left && tree->right)
+        {
+            if(tree->right->data.keywrd == INT)
+            {
+                tree->data.data = std::to_string(unop(atoi(tree->right->data.data.c_str()), tree->data.data));
+                tree->data.keywrd = INT;
+                delete tree->left;
+                tree->left = nullptr;
+                delete tree->right;
+                tree->right = nullptr;
+            }
+            else if(tree->right->data.keywrd == VAR)
+            {
+                return;
+            }
+        }
+        else
+        {
+            if(tree->left->data.keywrd == INT && 
+               tree->right->data.keywrd == INT)
+            {
+                tree->data.data = std::to_string(binop(atoi(tree->left->data.data.c_str()), 
+                                    atoi(tree->right->data.data.c_str()), tree->data.data));
+                tree->data.keywrd = INT;
+                delete tree->left;
+                tree->left = nullptr;
+                delete tree->right;
+                tree->right = nullptr;
+            }
+        }
+    }
+    if(noRoots)
+    {
+        return;
+    }
+    if(tree->left)
+    {
+        optimizeTree(tree->left);
+    }
+    if(tree->right)
+    {
+        optimizeTree(tree->right);
+    }
+}
+
 int Interpreter::evaluateExpression(const std::string& expr)
 {
     ExpressionTree::Node* tree;
