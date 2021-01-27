@@ -7,16 +7,18 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
 
     std::vector<Token> tokens = parser.parseExpression(expr);
 
-    // TODO: i think this should be read from end to begin
-    // To fix priorities
+    bool isPrevOp = false;
+
     int sz = tokens.size();
     for(int i = sz - 1; i >= 0; i--)
     {
+        // std::cout << tokens[i].data << " " << (isPrevOp ? "YES": "NO") << std::endl;
         // If token is an int or var, add it
         if(tokens[i].keywrd == INT || tokens[i].keywrd == VAR)
         {
             Node* toAdd = new Node(tokens[i], nullptr, nullptr);
             operands.push(toAdd);
+            isPrevOp = false;
         }
         else if (tokens[i].keywrd == OPERATOR)
         {
@@ -37,6 +39,7 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                 // Do all operations until closing bracket
                 if(!tokens[i].data.compare("("))
                 {
+                    isPrevOp = false;
                     //TODO: check if there are the right amount of brackets
                     while(operators.top().compare(")"))
                     {
@@ -45,22 +48,41 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                     }
                     operators.pop();
                 }
-                // If prev op is of higher priority build tree up
-                if(operands.size() >= 2 && !prevOp.empty())
+                else if(operators.top().compare(")"))
                 {
-                    if(operators.top().compare(")"))
+                    if(isPrevOp)
                     {
+                        Node* topOperand = operands.top();
+                        operands.pop();
+                        operands.push(new Node({OPERATOR, prevOp}, nullptr, topOperand));
+                        // Pop prev op
+                        std::string tmp = operators.top();
+                        operators.pop();
+                        operators.pop();
+                        operators.push(tmp);
+                    }
+                    else if(operands.size() >= 2 && !prevOp.empty())
+                    {
+                        // If prev op is of higher priority build tree up
+                        // Not sure if this should be > or >=
+                        // TODO: priorities are messed up in cases like 5+5*5/7
                         if(getOpPriority(prevOp) > getOpPriority(operators.top()))
                         {
                             constructBinOpNode(operands, prevOp);
+                            // Pop prev op
                             std::string tmp = operators.top();
                             operators.pop();
                             operators.pop();
                             operators.push(tmp);
                         }
-                        
                     }
+                    isPrevOp = true;
                 }
+                else
+                {
+                    isPrevOp = false;
+                }
+                
             }
             
         }

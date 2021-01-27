@@ -23,7 +23,8 @@ class Interpreter
     private:
         VarHandler varHandler;
         int getOpPriority(const std::string& op);
-        int operation(int x, int y, const std::string& op);
+        int binop(int x, int y, const std::string& op);
+        int unop(int x, const std::string& op);
         void performLastOp(std::stack<int>& operands, std::stack<std::string>& operators);
         int getClosingToken(keyWord opening, keyWord closing,
                             std::vector<Token>& tokens, size_t& start);

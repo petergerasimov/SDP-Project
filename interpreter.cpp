@@ -25,7 +25,11 @@ int Interpreter::evaluateTree(ExpressionTree::Node* tree)
             throw std::runtime_error("Invalid expression");
             return 0;
         }
-        return operation(evaluateTree(tree->left), evaluateTree(tree->right), tree->data.data);
+        if(!tree->left && tree->right)
+        {
+            return unop(evaluateTree(tree->right), tree->data.data);
+        }
+        return binop(evaluateTree(tree->left), evaluateTree(tree->right), tree->data.data);
     }
     if(noRoots)
     {
@@ -59,7 +63,7 @@ void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::strin
     operands.pop();
     int y = operands.top();
     operands.pop();
-    operands.push(operation(y, x, operators.top()));
+    operands.push(binop(y, x, operators.top()));
     operators.pop();
 }
 
@@ -271,7 +275,7 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
 
 //TODO: MAKE THIS BETTER
 //EITHER WITH MAP OR UNORDERED_MAP
-int Interpreter::operation(int x, int y, const std::string& op)
+int Interpreter::binop(int x, int y, const std::string& op)
 {
     if(!op.compare("||"))
     {
@@ -332,6 +336,27 @@ int Interpreter::operation(int x, int y, const std::string& op)
     else
     {
         throw std::runtime_error("Invalid operator " + op);
+        return -1;
+    }
+}
+
+int Interpreter::unop(int x, const std::string& op)
+{
+    if(!op.compare("+"))
+    {
+        return x;
+    }
+    else if(!op.compare("-"))
+    {
+        return -x;
+    }
+    else if(!op.compare("!"))
+    {
+        return !x;
+    }
+    else
+    {
+        throw std::runtime_error(op + " not a unary operator");
         return -1;
     }
     
