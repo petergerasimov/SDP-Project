@@ -255,6 +255,9 @@ int Interpreter::_assign(const std::string& str)
 
 void Interpreter::interpretTokens(std::vector<Token> tokens)
 {
+    std::stack<std::list<std::string>> validVars;
+    std::list<std::string> empty;
+    validVars.push(empty);
     // enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};;
     // INT and OPERATOR are for expressions only
     static const size_t numOfFuncs = 9;
@@ -293,6 +296,9 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
             // Or maybe not
             if(tokens[i].keywrd == IF)
             {
+                //If is a new block
+                validVars.push(empty);
+
                 int endifIndex = getClosingToken(IF, ENDIF, tokens, i);
                 if(endifIndex < 0)
                 {
@@ -311,8 +317,23 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
                     }
                 }
             }
+            if(tokens[i].keywrd == ENDIF)
+            {
+                //Invalidate vars from current if
+                if(!validVars.empty())
+                {
+                    for(const std::string& var : validVars.top())
+                    {
+                        varHandler.invalidate(var);
+                    }
+                    validVars.pop();
+                }
+            }
             else if(tokens[i].keywrd == WHILE)
             {
+                //While is a new block
+                validVars.push(empty);
+
                 int doneIndex = getClosingToken(WHILE, DONE, tokens, i);
                 if(doneIndex < 0)
                 {
@@ -335,6 +356,19 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
                     whileIndicies.pop();
                     i = --gotoWhile;
                 }
+                //Invalidate vars from current while
+                if(!validVars.empty())
+                {
+                    for(const std::string& var : validVars.top())
+                    {
+                        varHandler.invalidate(var);
+                    }
+                    validVars.pop();
+                }
+            }
+            else if(tokens[i].keywrd == LET)
+            {
+                validVars.top().push_back(tokens[i].data);;
             }
         }
     }
