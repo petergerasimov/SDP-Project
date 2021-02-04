@@ -16,10 +16,14 @@ int main()
     assert(res == ((1354 - 1311)*(137 + 954) + 1337));
     res = i.evaluateExpression("5 == (7 - 2)");
     assert(res == (5 == (7 - 2)));
+    res = i.evaluateExpression("5-+-+-+-+-+5)");
+    assert(res == (5-+-+-+-+-+5));
     res = i.evaluateExpression("5 + 5*5/7");
     assert(res == (5 + 5*5/7));
     res = i.evaluateExpression("-1");
     assert(res == (-1));
+
+    //TODO: test some programs here
     
     return EXIT_SUCCESS;
 }

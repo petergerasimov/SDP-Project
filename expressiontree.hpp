@@ -21,7 +21,8 @@ class ExpressionTree
         Parser parser;
         int getOpPriority(const std::string& op);
         void constructBinOpNode(std::stack<Node*>& operands, 
-                                std::string& op);
+                                std::stack<std::string>& operators);
+        void insertAtBottomRight(Node* tree, Token& toInsert);
 };
 
 #endif //__EXPRESSION_TREE_HPP__

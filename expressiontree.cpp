@@ -7,88 +7,78 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
 
     std::vector<Token> tokens = parser.parseExpression(expr);
 
-    bool isPrevOp = false;
+    //Variables to keep track of unary operators
+    bool isPrevOp = true;
+    Node* unaryOps = nullptr;
 
     int sz = tokens.size();
-    for(int i = sz - 1; i >= 0; i--)
+    for(int i = 0; i < sz; i++)
     {
-        // std::cout << tokens[i].data << " " << (isPrevOp ? "YES": "NO") << std::endl;
-        // If token is an int or var, add it
-        if(tokens[i].keywrd == INT || tokens[i].keywrd == VAR)
+        //Add variables and integers to the operands stack
+        if(tokens[i].keywrd == VAR ||
+           tokens[i].keywrd == INT)
         {
-            Node* toAdd = new Node(tokens[i], nullptr, nullptr);
-            operands.push(toAdd);
+            if(unaryOps)
+            {
+                insertAtBottomRight(unaryOps, tokens[i]);
+                operands.push(unaryOps);
+                unaryOps = nullptr;
+            }
+            else
+            {
+                operands.push(new Node(tokens[i], nullptr, nullptr));
+            }
             isPrevOp = false;
         }
-        else if (tokens[i].keywrd == OPERATOR)
+        else if(tokens[i].keywrd == OPERATOR)
         {
-            std::string prevOp;
-            // Get the prev operator
-            if(!operators.empty() && operators.top().compare(")"))
+            //Constructing tree until an opening bracket
+            if(!tokens[i].data.compare(")"))
             {
-                prevOp = operators.top();
-            }
-            // Skip opening bracket when adding
-            if(tokens[i].data.compare("("))
-            {
-                operators.push(tokens[i].data);
-            }
-            if(!operators.empty())
-            {
-                // If token is opening bracket
-                // Do all operations until closing bracket
-                if(!tokens[i].data.compare("("))
+                while (!operators.empty() && 
+                        operators.top().compare("("))
                 {
-                    isPrevOp = false;
-                    //TODO: check if there are the right amount of brackets
-                    while(operators.top().compare(")"))
-                    {
-                        constructBinOpNode(operands, operators.top());
-                        operators.pop();
-                    }
+                    constructBinOpNode(operands, operators);
+                }
+                if(!operators.empty())
+                {
                     operators.pop();
                 }
-                else if(operators.top().compare(")"))
+                
+                //Brackets are operators but they act different...
+                isPrevOp = false;
+                continue;
+            }
+
+            if(isPrevOp && tokens[i].data.compare("("))
+            {
+                if(unaryOps)
                 {
-                    if(isPrevOp)
-                    {
-                        Node* topOperand = operands.top();
-                        operands.pop();
-                        operands.push(new Node({OPERATOR, prevOp}, nullptr, topOperand));
-                        // Pop prev op
-                        std::string tmp = operators.top();
-                        operators.pop();
-                        operators.pop();
-                        operators.push(tmp);
-                    }
-                    else if(operands.size() >= 2 && !prevOp.empty())
-                    {
-                        // If prev op is of higher priority build tree up
-                        // Not sure if this should be > or >=
-                        // TODO: priorities are messed up in cases like 5+5*5/7
-                        if(getOpPriority(prevOp) > getOpPriority(operators.top()))
-                        {
-                            constructBinOpNode(operands, prevOp);
-                            // Pop prev op
-                            std::string tmp = operators.top();
-                            operators.pop();
-                            operators.pop();
-                            operators.push(tmp);
-                        }
-                    }
-                    isPrevOp = true;
+                    insertAtBottomRight(unaryOps, tokens[i]);
                 }
                 else
                 {
-                    isPrevOp = false;
+                    unaryOps = new Node(tokens[i], nullptr, nullptr);
                 }
-                
+                continue;
+            }
+            //Check if top operator is of higher priority
+            //The = sign is because we assume left associativity
+            if(!operators.empty())
+            {
+                if(getOpPriority(operators.top()) >= getOpPriority(tokens[i].data))
+                {
+                    constructBinOpNode(operands, operators);
+                }
             }
             
+            //If not of higher priority add to stack
+            operators.push(tokens[i].data);
+            isPrevOp = true;
         }
+        
     }
-    // If there are any operators left
-    // Build the tree up further
+    //Construct tree from remaining elements
     while(!operators.empty())
     {
         if(!operators.top().compare(")"))
@@ -96,8 +86,7 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
             operators.pop();
             continue;
         }
-        constructBinOpNode(operands, operators.top());
-        operators.pop();
+        constructBinOpNode(operands, operators);
     }
     if(!operands.empty())
     {
@@ -106,21 +95,20 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
     return nullptr;
 }
 void ExpressionTree::constructBinOpNode(std::stack<Node*>& operands, 
-                                        std::string& op)
+                                        std::stack<std::string>& operators)
 {
     if(operands.size() < 2)
     {
-        // throw std::runtime_error("Can't find 2 operands");
-        std::cout << "Can't find 2 operands" << std::endl;
+        // std::cout << "Can't find 2 operands" << std::endl;
         return;
     }
-    Node* lhs = operands.top();
-    operands.pop();
     Node* rhs = operands.top();
     operands.pop();
-    // std::cout << op << ": " << lhs->data.data << " and " << rhs->data.data << std::endl;
-    Node* stitched = new Node({OPERATOR, op}, lhs, rhs);
+    Node* lhs = operands.top();
+    operands.pop();
+    Node* stitched = new Node({OPERATOR, operators.top()}, lhs, rhs);
     operands.push(stitched);
+    operators.pop();
 }
 
 int ExpressionTree::getOpPriority(const std::string& op)
@@ -154,5 +142,24 @@ int ExpressionTree::getOpPriority(const std::string& op)
     {
         throw std::runtime_error("Invalid operator " + op);
         return -1;
+    }
+}
+
+void ExpressionTree::insertAtBottomRight(Node* tree, Token& toInsert)
+{
+    if(!tree)
+    {
+        return;
+    }
+    else
+    {
+        if(!tree->right)
+        {
+            tree->right = new Node(toInsert, nullptr, nullptr);
+        }
+        else
+        {
+            insertAtBottomRight(tree->right, toInsert);
+        }
     }
 }
