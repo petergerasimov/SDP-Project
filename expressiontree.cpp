@@ -36,10 +36,9 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
             if(!tokens[i].data.compare("("))
             {
                 operators.push(tokens[i].data);
-                continue;
             }
             //Constructing tree until an opening bracket
-            if(!tokens[i].data.compare(")"))
+            else if(!tokens[i].data.compare(")"))
             {
                 while (!operators.empty() && 
                         operators.top().compare("("))
@@ -53,10 +52,9 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                 
                 //Brackets are operators but they act different...
                 isPrevOp = false;
-                continue;
             }
 
-            if(isPrevOp && tokens[i].data.compare("("))
+            else if(isPrevOp && tokens[i].data.compare("("))
             {
                 if(unaryOps)
                 {
@@ -66,21 +64,24 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
                 {
                     unaryOps = new Node(tokens[i], nullptr, nullptr);
                 }
-                continue;
-            }
-            //Check if top operator is of higher priority
-            //The = sign is because we assume left associativity
-            if(!operators.empty())
-            {
-                if(getOpPriority(operators.top()) >= getOpPriority(tokens[i].data))
-                {
-                    constructBinOpNode(operands, operators);
-                }
             }
             
-            //If not of higher priority add to stack
-            operators.push(tokens[i].data);
-            isPrevOp = true;
+            else
+            {
+                //Check if top operator is of higher priority
+                //The = sign is because we assume left associativity
+                if(!operators.empty())
+                {
+                    if(getOpPriority(operators.top()) >= getOpPriority(tokens[i].data))
+                    {
+                        constructBinOpNode(operands, operators);
+                    }
+                }
+
+                //If not of higher priority add to stack
+                operators.push(tokens[i].data);
+                isPrevOp = true;
+            }
         }
         
     }
@@ -90,9 +91,11 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
         if(!operators.top().compare(")"))
         {
             operators.pop();
-            continue;
         }
-        constructBinOpNode(operands, operators);
+        else
+        {
+            constructBinOpNode(operands, operators);
+        }
     }
     if(!operands.empty())
     {

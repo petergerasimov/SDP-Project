@@ -24,8 +24,8 @@ int main()
     assert(res == ((7-2) + (5 - (3-5))));
     res = i.evaluateExpression("-1");
     assert(res == (-1));
-
-    //TODO: test some programs here
     
+    //TODO: test some programs here
+    std::cout << "No errors" << std::endl;
     return EXIT_SUCCESS;
 }
