@@ -20,6 +20,8 @@ int main()
     assert(res == (5-+-+-+-+-+5));
     res = i.evaluateExpression("5 + 5*5/7");
     assert(res == (5 + 5*5/7));
+    res = i.evaluateExpression("(7-2) + (5 - (3-5))");
+    assert(res == ((7-2) + (5 - (3-5))));
     res = i.evaluateExpression("-1");
     assert(res == (-1));
 

@@ -32,6 +32,12 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
         }
         else if(tokens[i].keywrd == OPERATOR)
         {
+            //Add opening bracket
+            if(!tokens[i].data.compare("("))
+            {
+                operators.push(tokens[i].data);
+                continue;
+            }
             //Constructing tree until an opening bracket
             if(!tokens[i].data.compare(")"))
             {
