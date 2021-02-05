@@ -41,7 +41,7 @@
 <g id="node4" class="node">
 <title>n6</title>
 <ellipse fill="none" stroke="black" cx="63" cy="-162" rx="27" ry="18"/>
-<text text-anchor="middle" x="63" y="-158.3" font-family="Times,serif" font-size="14.00">b</text>
+<text text-anchor="middle" x="63" y="-158.3" font-family="Times,serif" font-size="14.00">5</text>
 </g>
 <!-- n5&#45;&#45;n6 -->
 <g id="edge3" class="edge">

@@ -124,7 +124,6 @@ keyWord Parser::numOrVar(const std::string& str)
                 throw std::runtime_error(str + " is not a valid variable.");
             }
         }
-        // TODO: Maybe it will be more optimal if there is an ARRAY keyword
         return VAR;
     }
     else

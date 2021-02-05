@@ -14,7 +14,6 @@ int Interpreter::evaluateTree(ExpressionTree::Node* tree)
     }
     else if(tree->data.keywrd == VAR)
     {
-        // TODO: optimize for variables
         value = varHandler.getValue(getArrayName(tree->data.data), 
                                     getArrayIndex(tree->data.data));
     }
@@ -145,8 +144,6 @@ void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::strin
     operators.pop();
 }
 
-
-// TODO: add this to the parser
 std::string Interpreter::getArrayExpr(const std::string& expr)
 {
     std::string emptyExpr;
@@ -208,7 +205,6 @@ int Interpreter::_read(const std::string& str)
 int Interpreter::_print(const std::string& str)
 {
     std::cout << evaluateExpression(str);
-    // std::cout << varHandler.getValue(str);
     std::cout << std::endl;
     return 1;
 }
@@ -370,6 +366,11 @@ int Interpreter::binop(int x, int y, const std::string& op)
     if(!op.compare("||"))
     {
         return x || y;
+    }
+    if(!op.compare("="))
+    {
+        throw std::runtime_error(std::to_string(x) + " is not an lvalue.");
+        return -1;
     }
     else if(!op.compare("&&"))
     {
