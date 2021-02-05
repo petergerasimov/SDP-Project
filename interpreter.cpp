@@ -331,9 +331,8 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
             }
             else if(tokens[i].keywrd == WHILE)
             {
-                //While is a new block
-                validVars.push(empty);
-
+                // //While is a new block
+                // validVars.push(empty);
                 int doneIndex = getClosingToken(WHILE, DONE, tokens, i);
                 if(doneIndex < 0)
                 {
@@ -341,10 +340,12 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
                 }
                 if(!value)
                 {
-                    i = --doneIndex;
+                    i = doneIndex;
                 }
                 else
                 {
+                    //While is a new block
+                    validVars.push(empty);
                     whileIndicies.push(i);
                 }
             }
@@ -368,7 +369,7 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
             }
             else if(tokens[i].keywrd == LET)
             {
-                validVars.top().push_back(tokens[i].data);;
+                validVars.top().push_back(tokens[i].data);
             }
         }
     }
