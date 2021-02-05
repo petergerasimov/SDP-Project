@@ -18,91 +18,52 @@
 
 #include "interpreter.hpp"
 #include <iostream>
+#include <cstring>
 
-void genStream(ExpressionTree::Node* tree, std::stringstream& ss, int prevPos = -1)
-{
-    static int nodePos = 0;
-    nodePos++;
-    if(!tree) return;
-    if(prevPos != -1)
-    {
-        ss << "\tn" << prevPos << " -- n" << nodePos << ";\n";
-    }
-    ss << "\tn" << nodePos << " [label = \"" << tree->data.data << "\"];\n";
-    int currPos = nodePos;
-    genStream(tree->left, ss, currPos);
-    genStream(tree->right, ss, currPos);
-    
-}
-
-void toSVG(ExpressionTree::Node* tree, std::string filename)
-{
-    std::stringstream ss;
-    ss << "graph G {\n";
-    genStream(tree, ss);
-    ss << "}\n";
-    std::ofstream file;
-    file.open ("temp.dot");
-    file << ss.str();
-    file.close();
-    std::string cmd = "dot -Tsvg temp.dot -o " + filename;
-    system(cmd.c_str());
-    // system("rm temp.dot");
-}
-
-int main()
+int main(int argc,char* argv[])
 {
     Interpreter i;
-    std::string file = "./examples/test1.txt";
-    std::vector<Token> tokens = i.parser.parseFile(file);
-    // i.repl();
-    static const std::map<int, std::string> testMap = {
-        {LET, "LET"},
-        {READ, "READ"},
-        {PRINT, "PRINT"},
-        {WHILE, "WHILE"},
-        {DONE, "DONE"},
-        {IF, "IF"},
-        {ELSE, "ELSE"},
-        {ENDIF, "ENDIF"},
-        {ASSIGN, "ASSIGN"},
-        {GOTO, "GOTO"},
-        {LABEL, "LABEL"},
-        {INT, "INT"},
-        {VAR, "VAR"},
-        {OPERATOR, "OPERATOR"}
-    };
-
-    ExpressionTree ex;
-    ExpressionTree::Node* tree;
-    tree = ex.generate("(7-2) + (5 - (3-5))");
-    toSVG(tree, "nodes.svg");
-    i.optimizeTree(tree);
-    toSVG(tree, "optimized.svg");
-
-    // for(auto& t : tokens)
-    // {
-    //     auto it = testMap.find(t.keywrd);
-    //     if(it != testMap.end())
-    //     {
-    //         std::cout << it->second << " " <<  t.data << std::endl;
-    //     }
-    //     else
-    //     {
-    //         std::cout << "None" << " " <<  t.data << std::endl;
-    //     }
-        
-    // }
-    // std::cout << "End of tokens" << std::endl;
-
-    try
+    if(argc == 1)
     {
-        i.interpretTokens(tokens);
+        std::cout << "Run with --help for more info." << std::endl;
     }
-    catch(const std::exception& e)
+    else if(argc == 2) 
+    { 
+        if(!strcmp(argv[1], "--help"))
+        {
+            std::cout << "--repl to run in repl mode\n" <<
+                         "or just type a file name to run the file." << std::endl;
+        }
+        else if(!strcmp(argv[1], "--repl"))
+        {
+            try
+            {
+                i.repl();
+            }
+            catch(const std::exception& e)
+            {
+                // Wanting user to see the errors
+                std::cout << e.what() << std::endl;
+            }
+        }
+        else
+        {
+            std::string filename = argv[1];
+            try
+            {
+                std::vector<Token> tokens = i.parser.parseFile(filename);
+                i.interpretTokens(tokens);
+            }
+            catch(const std::exception& e)
+            {
+                std::cout << e.what() << std::endl;
+            }
+        }
+    }
+    else
     {
-        std::cerr << e.what() << '\n';
+        std::cout << "Too many arguments" <<
+                    "Run with --help for more info." << std::endl;
     }
-
     return EXIT_SUCCESS;
 }
