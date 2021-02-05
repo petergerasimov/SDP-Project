@@ -68,11 +68,14 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
             
             else
             {
-                //Check if top operator is of higher priority
-                //The = sign is because we assume left associativity
                 if(!operators.empty())
                 {
-                    if(getOpPriority(operators.top()) >= getOpPriority(tokens[i].data))
+                    int opTop = getOpPriority(operators.top());
+                    int opCurr = getOpPriority(tokens[i].data);
+                    //Check if top operator is of higher priority
+                    //The assume left associativity
+                    //Unless operator =
+                    if(opTop > opCurr || ((opTop == opCurr && tokens[i].data.compare("="))))
                     {
                         constructBinOpNode(operands, operators);
                     }

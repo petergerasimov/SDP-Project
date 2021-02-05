@@ -9,54 +9,54 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)">
 <title>G</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-184 166,-184 166,4 -4,4"/>
-<!-- n24 -->
+<!-- n20 -->
 <g id="node1" class="node">
-<title>n24</title>
+<title>n20</title>
 <ellipse fill="none" stroke="black" cx="63" cy="-162" rx="27" ry="18"/>
-<text text-anchor="middle" x="63" y="-158.3" font-family="Times,serif" font-size="14.00">&#45;</text>
+<text text-anchor="middle" x="63" y="-158.3" font-family="Times,serif" font-size="14.00">=</text>
 </g>
-<!-- n25 -->
+<!-- n21 -->
 <g id="node2" class="node">
-<title>n25</title>
+<title>n21</title>
 <ellipse fill="none" stroke="black" cx="27" cy="-90" rx="27" ry="18"/>
-<text text-anchor="middle" x="27" y="-86.3" font-family="Times,serif" font-size="14.00">15</text>
+<text text-anchor="middle" x="27" y="-86.3" font-family="Times,serif" font-size="14.00">a</text>
 </g>
-<!-- n24&#45;&#45;n25 -->
+<!-- n20&#45;&#45;n21 -->
 <g id="edge1" class="edge">
-<title>n24&#45;&#45;n25</title>
+<title>n20&#45;&#45;n21</title>
 <path fill="none" stroke="black" d="M54.65,-144.76C48.83,-133.46 41.11,-118.44 35.3,-107.15"/>
 </g>
-<!-- n28 -->
+<!-- n24 -->
 <g id="node3" class="node">
-<title>n28</title>
+<title>n24</title>
 <ellipse fill="none" stroke="black" cx="99" cy="-90" rx="27" ry="18"/>
-<text text-anchor="middle" x="99" y="-86.3" font-family="Times,serif" font-size="14.00">*</text>
+<text text-anchor="middle" x="99" y="-86.3" font-family="Times,serif" font-size="14.00">=</text>
 </g>
-<!-- n24&#45;&#45;n28 -->
+<!-- n20&#45;&#45;n24 -->
 <g id="edge2" class="edge">
-<title>n24&#45;&#45;n28</title>
+<title>n20&#45;&#45;n24</title>
 <path fill="none" stroke="black" d="M71.35,-144.76C77.17,-133.46 84.89,-118.44 90.7,-107.15"/>
 </g>
-<!-- n29 -->
+<!-- n25 -->
 <g id="node4" class="node">
-<title>n29</title>
+<title>n25</title>
 <ellipse fill="none" stroke="black" cx="63" cy="-18" rx="27" ry="18"/>
-<text text-anchor="middle" x="63" y="-14.3" font-family="Times,serif" font-size="14.00">a</text>
+<text text-anchor="middle" x="63" y="-14.3" font-family="Times,serif" font-size="14.00">b</text>
 </g>
-<!-- n28&#45;&#45;n29 -->
+<!-- n24&#45;&#45;n25 -->
 <g id="edge3" class="edge">
-<title>n28&#45;&#45;n29</title>
+<title>n24&#45;&#45;n25</title>
 <path fill="none" stroke="black" d="M90.65,-72.76C84.83,-61.46 77.11,-46.44 71.3,-35.15"/>
 </g>
-<!-- n32 -->
+<!-- n28 -->
 <g id="node5" class="node">
-<title>n32</title>
+<title>n28</title>
 <ellipse fill="none" stroke="black" cx="135" cy="-18" rx="27" ry="18"/>
-<text text-anchor="middle" x="135" y="-14.3" font-family="Times,serif" font-size="14.00">7</text>
+<text text-anchor="middle" x="135" y="-14.3" font-family="Times,serif" font-size="14.00">13</text>
 </g>
-<!-- n28&#45;&#45;n32 -->
+<!-- n24&#45;&#45;n28 -->
 <g id="edge4" class="edge">
-<title>n28&#45;&#45;n32</title>
+<title>n24&#45;&#45;n28</title>
 <path fill="none" stroke="black" d="M107.35,-72.76C113.17,-61.46 120.89,-46.44 126.7,-35.15"/>
 </g>
 </g>

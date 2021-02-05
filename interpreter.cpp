@@ -29,6 +29,22 @@ int Interpreter::evaluateTree(ExpressionTree::Node* tree)
         {
             return unop(evaluateTree(tree->right), tree->data.data);
         }
+        if(!tree->data.data.compare("="))
+        {
+            int rvalue = -1;
+            if(tree->left->data.keywrd == VAR)
+            {
+                rvalue = evaluateTree(tree->right);
+                varHandler.changeValue(getArrayName(tree->left->data.data), 
+                                       rvalue,
+                                       getArrayIndex(tree->left->data.data));
+            }
+            else
+            {
+                throw std::runtime_error(tree->left->data.data + "is not an lvalue");
+            }
+            return rvalue;
+        }
         return binop(evaluateTree(tree->left), evaluateTree(tree->right), tree->data.data);
     }
     if(noRoots)
@@ -221,30 +237,7 @@ int Interpreter::_endif(const std::string& str)
 }
 int Interpreter::_assign(const std::string& str)
 {
-    //TODO: make it work with arrays
-    //Also redesign wtih new expression evaluator
-    std::string buffVar;
-    std::string buffExpr;
-    bool foundEq = false;
-    for(const char c : str)
-    {
-        if(c == '=' && !foundEq)
-        {
-            foundEq = true;
-            continue;
-        }
-        if(!foundEq)
-        {
-            buffVar.push_back(c);
-        }
-        else
-        {
-            buffExpr.push_back(c);
-        }
-        
-    }
-    int exprValue = evaluateExpression(buffExpr);
-    varHandler.changeValue(getArrayName(buffVar), exprValue, getArrayIndex(buffVar));
+    evaluateExpression(str);
     return 1;
 }
 
