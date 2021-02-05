@@ -41,7 +41,7 @@ int Interpreter::evaluateTree(ExpressionTree::Node* tree)
             }
             else
             {
-                throw std::runtime_error(tree->left->data.data + "is not an lvalue");
+                throw std::runtime_error(tree->left->data.data + " is not an lvalue.");
             }
             return rvalue;
         }
