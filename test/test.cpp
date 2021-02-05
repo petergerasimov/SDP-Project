@@ -40,6 +40,8 @@ int main()
     assert(runFileFromMain("ifTest.pep")[0] == 10);
     //Testing else
     assert(runFileFromMain("elseTest.pep")[0] == 16);
+    //Testing goto
+    assert(runFileFromMain("gotoTest.pep")[0] == 1337);
     //Testing while
     std::vector<int> outputs = runFileFromMain("whileTest.pep");
     for(int i = 0; i < 10; i++)
@@ -47,6 +49,32 @@ int main()
         assert(outputs[i] == i);
     }
     //Testing nested loops
+    outputs = runFileFromMain("whileTest.pep");
+    for(int i = 0; i < 10; i++)
+    {
+        for(int j = 0; j < i; j++)
+        {
+            assert(outputs[j] == j);
+        }
+    }
+    //Testing arrays
+    outputs = runFileFromMain("arrayTest.pep");
+    for(int i = 0; i < 10; i++)
+    {
+        assert(outputs[i] == i + 10);
+    }
+
+    //Testing scopes
+    std::string filename = "scopeTest.pep";
+    std::vector<Token> tokens = i.parser.parseFile(filename);
+    try
+    {
+        i.interpretTokens(tokens);
+    }
+    catch(const std::exception& e)
+    {
+        assert(!strcmp(e.what(), "Variable a not defined."));
+    }
 
     std::cout << "No errors" << std::endl;
     return EXIT_SUCCESS;

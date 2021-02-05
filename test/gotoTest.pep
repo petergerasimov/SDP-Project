@@ -1,0 +1,5 @@
+GOTO end
+WHILE 1
+DONE
+LABEL end
+PRINT 1337
