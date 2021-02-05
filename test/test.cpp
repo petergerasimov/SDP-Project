@@ -76,6 +76,10 @@ int main()
         assert(!strcmp(e.what(), "Variable a not defined."));
     }
 
+    ExpressionTree::Node* tree = i.expTreeHelper.generate("((5+5) + 5)-(a*(2+5))");
+    toSVG(tree, "nodes.svg");
+    tree = i.optimizeTree(tree);
+    toSVG(tree, "optimized.svg");
     std::cout << "No errors" << std::endl;
     return EXIT_SUCCESS;
 }

@@ -17,7 +17,7 @@ class Interpreter
         Parser parser;
         ExpressionTree expTreeHelper;
         int evaluateTree(ExpressionTree::Node* tree);
-        void optimizeTree(ExpressionTree::Node* tree);
+        ExpressionTree::Node* optimizeTree(ExpressionTree::Node* tree);
         int evaluateExpression(const std::string& expr);
         void interpretTokens(std::vector<Token> tokens);
         void repl();
