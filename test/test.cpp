@@ -5,12 +5,14 @@
 //Generate SVG from tree
 void genStream(ExpressionTree::Node* tree, std::stringstream& ss, int prevPos = -1);
 void toSVG(ExpressionTree::Node* tree, std::string filename);
+std::vector<int> runFileFromMain(std::string filename, std::string inputs="");
 
 int main()
 {
     Interpreter i;
-    int res;
+    
     //Testing expressions
+    int res;
     res = i.evaluateExpression("1 + 1");
     assert(res == (1 + 1));
     res = i.evaluateExpression("1 + 1 + 5*5 + 3");
@@ -29,15 +31,28 @@ int main()
     assert(res == ((7-2) + (5 - (3-5))));
     res = i.evaluateExpression("-1");
     assert(res == (-1));
+
     //Testing programs
-    std::string filename = "variableTest.pep";
-    std::vector<Token> tokens = i.parser.parseFile(filename);
-    i.interpretTokens(tokens);
+
+    //Testing variables
+    assert(runFileFromMain("variableTest.pep")[0] == 12345);
+    //Testing ifs/ nested ifs
+    assert(runFileFromMain("ifTest.pep")[0] == 10);
+    //Testing else
+    assert(runFileFromMain("elseTest.pep")[0] == 16);
+    //Testing while
+    std::vector<int> outputs = runFileFromMain("whileTest.pep");
+    for(int i = 0; i < 10; i++)
+    {
+        assert(outputs[i] == i);
+    }
+    //Testing nested loops
+
     std::cout << "No errors" << std::endl;
     return EXIT_SUCCESS;
 }
 
-void genStream(ExpressionTree::Node* tree, std::stringstream& ss, int prevPos = -1)
+void genStream(ExpressionTree::Node* tree, std::stringstream& ss, int prevPos)
 {
     static int nodePos = 0;
     nodePos++;
@@ -66,4 +81,32 @@ void toSVG(ExpressionTree::Node* tree, std::string filename)
     std::string cmd = "dot -Tsvg temp.dot -o " + filename;
     system(cmd.c_str());
     system("rm temp.dot");
+}
+
+std::vector<int> runFileFromMain(std::string filename, std::string inputs)
+{
+    //Pipe output from main program to outputs.txt
+    std::string cmd;
+    if(!inputs.empty())
+    {
+        cmd = inputs + " > ../a.out " + filename + " > outputs.txt";
+    }
+    else
+    {
+        cmd = "../a.out " + filename + " > outputs.txt";
+    }
+    system(cmd.c_str());
+    //Open outputs.txt
+    std::ifstream file("outputs.txt");
+    //Values to return
+    std::vector<int> outputs;
+    while (!file.eof())
+    {
+        int tmp;
+        file >> tmp;
+        outputs.push_back(tmp);
+    }
+    file.close();
+    system("rm outputs.txt");
+    return outputs;
 }
