@@ -23,6 +23,8 @@ class Interpreter
         void repl();
     private:
         VarHandler varHandler;
+        typedef std::unordered_map<std::string, ExpressionTree::Node*> exprToPoint;
+        exprToPoint optimizedExpressions;
         int getOpPriority(const std::string& op);
         int binop(int x, int y, const std::string& op);
         int unop(int x, const std::string& op);

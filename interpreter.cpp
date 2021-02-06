@@ -71,7 +71,7 @@ ExpressionTree::Node* Interpreter::optimizeTree(ExpressionTree::Node* tree)
     ExpressionTree::Node* right = nullptr;
     if(tree->data.keywrd == OPERATOR)
     {
-        if(tree-left)
+        if(tree->left)
         {
             if(tree->left->data.keywrd == OPERATOR)
             {
@@ -125,9 +125,19 @@ ExpressionTree::Node* Interpreter::optimizeTree(ExpressionTree::Node* tree)
 
 int Interpreter::evaluateExpression(const std::string& expr)
 {
-    ExpressionTree::Node* tree;
-    tree = expTreeHelper.generate(expr);
-    return evaluateTree(tree);
+    exprToPoint::iterator it = optimizedExpressions.find(expr);
+    if(it != optimizedExpressions.end())
+    {
+        return evaluateTree(it->second);
+    }
+    else
+    {
+        ExpressionTree::Node* tree;
+        tree = expTreeHelper.generate(expr);
+        optimizeTree(tree);
+        optimizedExpressions.insert({expr, tree});
+        return evaluateTree(tree);
+    }
 }
 
 void Interpreter::performLastOp(std::stack<int>& operands, std::stack<std::string>& operators)

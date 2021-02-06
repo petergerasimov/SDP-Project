@@ -76,7 +76,7 @@ int main()
         assert(!strcmp(e.what(), "Variable a not defined."));
     }
 
-    ExpressionTree::Node* tree = i.expTreeHelper.generate("a = 5 = 6 + 2 + 5");
+    ExpressionTree::Node* tree = i.expTreeHelper.generate("-5");
     toSVG(tree, "nodes.svg");
     tree = i.optimizeTree(tree);
     toSVG(tree, "optimized.svg");

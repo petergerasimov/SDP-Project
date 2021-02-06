@@ -106,6 +106,31 @@ ExpressionTree::Node* ExpressionTree::generate(std::string expr)
     }
     return nullptr;
 }
+
+ExpressionTree::Node* ExpressionTree::copyTree(Node* tree)
+{
+    if(!tree)
+    {
+        return nullptr;
+    }
+    Node* cpy = new Node(tree->data, nullptr, nullptr);
+    cpy->left = copyTree(tree->left);
+    cpy->right = copyTree(tree->right);
+    return cpy;
+}
+
+void ExpressionTree::deleteTree(Node* tree)
+{
+    if(!tree)
+    {
+        return;
+    }
+    deleteTree(tree->left);
+    deleteTree(tree->right);
+    delete tree;
+    tree = nullptr;
+}
+
 void ExpressionTree::constructBinOpNode(std::stack<Node*>& operands, 
                                         std::stack<std::string>& operators)
 {
