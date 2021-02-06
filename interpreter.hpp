@@ -36,16 +36,11 @@ class Interpreter
         std::string getArrayName(const std::string& expr);
         int getArrayIndex(const std::string& expr);
         //
-        typedef int (Interpreter::*func)(const std::string& str);
         int _let(const std::string& str);
         int _read(const std::string& str);
         int _print(const std::string& str);
-        int _while(const std::string& str);
-        int _done(const std::string& str);
-        int _if(const std::string& str);
-        int _else(const std::string& str);
-        int _endif(const std::string& str);
-        int _assign(const std::string& str);
+        int _eval(const std::string& str);
+        int _blank(const std::string& str);
 };
 
 #endif //__INTERPRETER_HPP__

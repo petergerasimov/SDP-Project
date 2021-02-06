@@ -14,5 +14,6 @@ WHILE i < n
     IF arr[i] < smallest
         smallest = arr[i]
     ENDIF
+    i = i + 1
 DONE
 PRINT smallest

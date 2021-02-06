@@ -217,32 +217,13 @@ int Interpreter::_print(const std::string& str)
     std::cout << std::endl;
     return 1;
 }
-int Interpreter::_while(const std::string& str)
+int Interpreter::_eval(const std::string& str)
 {
     return evaluateExpression(str);
 }
-int Interpreter::_done(const std::string& str)
+int Interpreter::_blank(const std::string& str)
 {
     std::cout << str;
-    return 1;
-}
-int Interpreter::_if(const std::string& str)
-{
-    return evaluateExpression(str);
-}
-int Interpreter::_else(const std::string& str)
-{
-    std::cout << str;
-    return 1;
-}
-int Interpreter::_endif(const std::string& str)
-{
-    std::cout << str;
-    return 1;
-}
-int Interpreter::_assign(const std::string& str)
-{
-    evaluateExpression(str);
     return 1;
 }
 
@@ -251,15 +232,20 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
     std::stack<std::list<std::string>> validVars;
     std::list<std::string> empty;
     validVars.push(empty);
-    // enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};;
-    // INT and OPERATOR are for expressions only
+    
+    typedef int (Interpreter::*func)(const std::string& str);
+    // enum keyWord {LET, READ, PRINT, WHILE, DONE, IF, ELSE, ENDIF, ASSIGN, GOTO, LABEL, INT, OPERATOR};
     static const size_t numOfFuncs = 9;
     static const func functions[numOfFuncs] = {
-        &Interpreter::_let,   &Interpreter::_read, 
-        &Interpreter::_print, &Interpreter::_while, 
-        &Interpreter::_done,  &Interpreter::_if, 
-        &Interpreter::_else,  &Interpreter::_endif, 
-        &Interpreter::_assign
+        &Interpreter::_let,    //let
+        &Interpreter::_read,   //read
+        &Interpreter::_print,  //print
+        &Interpreter::_eval,   //while
+        &Interpreter::_blank,  //done
+        &Interpreter::_eval,   //if
+        &Interpreter::_blank,  //else
+        &Interpreter::_blank,  //endif
+        &Interpreter::_eval    //assign
     };
     
     int sz = tokens.size();
@@ -372,27 +358,28 @@ int Interpreter::binop(int x, int y, const std::string& op)
 {
     typedef int (*opFunc)(int& x, int& y);
     typedef std::map<std::string, opFunc> strToOpMap;
+    // Mapping operator string to a function
     static const strToOpMap opMap = {
-        {"||", [](int& x, int&y)->int{return x || y;}},
-        {"=" , [](int& x, int&y)->int{
+        {"||", [](int& x, int& y)->int{return x || y;}},
+        {"=" , [](int& x, int& y)->int{
             throw std::runtime_error(std::to_string(x) + " is not an lvalue.");
             return -1;
         }},
-        {"&&", [](int& x, int&y)->int{return x && y;}},
-        {"==", [](int& x, int&y)->int{return x == y;}},
-        {"!=", [](int& x, int&y)->int{return x != y;}},
-        {"<" , [](int& x, int&y)->int{return x <  y;}},
-        {"<=", [](int& x, int&y)->int{return x <= y;}},
-        {">" , [](int& x, int&y)->int{return x >  y;}},
-        {">=", [](int& x, int&y)->int{return x >= y;}},
-        {"+" , [](int& x, int&y)->int{return x +  y;}},
-        {"-" , [](int& x, int&y)->int{return x -  y;}},
-        {"*" , [](int& x, int&y)->int{return x *  y;}},
-        {"/" , [](int& x, int&y)->int{
+        {"&&", [](int& x, int& y)->int{return x && y;}},
+        {"==", [](int& x, int& y)->int{return x == y;}},
+        {"!=", [](int& x, int& y)->int{return x != y;}},
+        {"<" , [](int& x, int& y)->int{return x <  y;}},
+        {"<=", [](int& x, int& y)->int{return x <= y;}},
+        {">" , [](int& x, int& y)->int{return x >  y;}},
+        {">=", [](int& x, int& y)->int{return x >= y;}},
+        {"+" , [](int& x, int& y)->int{return x +  y;}},
+        {"-" , [](int& x, int& y)->int{return x -  y;}},
+        {"*" , [](int& x, int& y)->int{return x *  y;}},
+        {"/" , [](int& x, int& y)->int{
             if(y == 0) throw std::runtime_error("Can't divide by 0.");
             return x / y;
         }},
-        {"%" , [](int& x, int&y)->int{
+        {"%" , [](int& x, int& y)->int{
             if(y == 0) throw std::runtime_error("Can't divide by 0.");
             return x % y;
         }},
