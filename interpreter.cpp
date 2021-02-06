@@ -198,8 +198,7 @@ int Interpreter::getArrayIndex(const std::string& expr)
     return index;
 }
 
-//:))) in class function pointer ;))))))))
-typedef int (Interpreter::*func)(const std::string& str);
+
 int Interpreter::_let(const std::string& str)
 {
     varHandler.add(getArrayName(str), getArrayIndex(str));
@@ -369,74 +368,43 @@ void Interpreter::interpretTokens(std::vector<Token> tokens)
     }
 }
 
-//TODO: MAKE THIS BETTER
-//EITHER WITH MAP OR UNORDERED_MAP
 int Interpreter::binop(int x, int y, const std::string& op)
 {
-    if(!op.compare("||"))
+    typedef int (*opFunc)(int& x, int& y);
+    typedef std::map<std::string, opFunc> strToOpMap;
+    static const strToOpMap opMap = {
+        {"||", [](int& x, int&y)->int{return x || y;}},
+        {"=" , [](int& x, int&y)->int{
+            throw std::runtime_error(std::to_string(x) + " is not an lvalue.");
+            return -1;
+        }},
+        {"&&", [](int& x, int&y)->int{return x && y;}},
+        {"==", [](int& x, int&y)->int{return x == y;}},
+        {"!=", [](int& x, int&y)->int{return x != y;}},
+        {"<" , [](int& x, int&y)->int{return x <  y;}},
+        {"<=", [](int& x, int&y)->int{return x <= y;}},
+        {">" , [](int& x, int&y)->int{return x >  y;}},
+        {">=", [](int& x, int&y)->int{return x >= y;}},
+        {"+" , [](int& x, int&y)->int{return x +  y;}},
+        {"-" , [](int& x, int&y)->int{return x -  y;}},
+        {"*" , [](int& x, int&y)->int{return x *  y;}},
+        {"/" , [](int& x, int&y)->int{
+            if(y == 0) throw std::runtime_error("Can't divide by 0.");
+            return x / y;
+        }},
+        {"%" , [](int& x, int&y)->int{
+            if(y == 0) throw std::runtime_error("Can't divide by 0.");
+            return x % y;
+        }},
+    };
+    strToOpMap::const_iterator it = opMap.find(op);
+    if(it != opMap.end())
     {
-        return x || y;
-    }
-    if(!op.compare("="))
-    {
-        throw std::runtime_error(std::to_string(x) + " is not an lvalue.");
-        return -1;
-    }
-    else if(!op.compare("&&"))
-    {
-        return x && y;
-    }
-    else if(!op.compare("=="))
-    {
-        return x == y;
-    }
-    else if(!op.compare("!="))
-    {
-        return x != y;
-    }
-    else if(!op.compare("<"))
-    {
-        return x < y;
-    }
-    else if(!op.compare("<="))
-    {
-        return x <= y;
-    }
-    else if(!op.compare(">"))
-    {
-        return x > y;
-    }
-    else if(!op.compare(">="))
-    {
-        return x >= y;
-    }
-    else if(!op.compare("+"))
-    {
-        return x + y;
-    }
-    else if(!op.compare("-"))
-    {
-        return x - y;
-    }
-    else if(!op.compare("*"))
-    {
-        return x * y;
-    }
-    else if(!op.compare("/"))
-    {
-        if(y == 0)
-        {
-            throw std::runtime_error("Division by zero!");
-        }
-        return x / y;
-    }
-    else if(!op.compare("%"))
-    {
-        return x % y;
+        return (*it->second)(x,y);
     }
     else
     {
-        throw std::runtime_error("Invalid operator " + op);
+        throw std::runtime_error("Can't find operator " + op);
         return -1;
     }
 }
@@ -460,7 +428,6 @@ int Interpreter::unop(int x, const std::string& op)
         throw std::runtime_error(op + " not a unary operator");
         return -1;
     }
-    
 }
 
 int Interpreter::getClosingToken(keyWord opening, keyWord closing,

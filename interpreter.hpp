@@ -36,6 +36,7 @@ class Interpreter
         std::string getArrayName(const std::string& expr);
         int getArrayIndex(const std::string& expr);
         //
+        typedef int (Interpreter::*func)(const std::string& str);
         int _let(const std::string& str);
         int _read(const std::string& str);
         int _print(const std::string& str);
